@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Note, Todo
 from .forms import NoteForm, TodoForm
-from django.db.models import Q
 
-# Dashboard view
+# ---------------------------
+# Dashboard
+# ---------------------------
 def dashboard(request):
     query = request.GET.get("q", "")
 
@@ -25,9 +26,9 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 
-# ----------------------
+# ---------------------------
 # Notes CRUD
-# ----------------------
+# ---------------------------
 def notes_list(request):
     notes = Note.objects.all().order_by("-created_at")
     return render(request, "notes_list.html", {"notes": notes})
@@ -59,9 +60,9 @@ def notes_delete(request, id):
     return redirect("notes_list")
 
 
-# ----------------------
+# ---------------------------
 # Todos CRUD
-# ----------------------
+# ---------------------------
 def todos_list(request):
     todos = Todo.objects.all().order_by("-created_at")
     return render(request, "todos_list.html", {"todos": todos})
@@ -91,10 +92,29 @@ def todos_delete(request, id):
     todo = get_object_or_404(Todo, id=id)
     todo.delete()
     return redirect("todos_list")
-from django.shortcuts import render
-from .models import Todo
 
+
+# ---------------------------
+# Todos Calendar
+# ---------------------------
 def todos_calendar(request):
-    # Fetch all todos that have a due date
-    todos = Todo.objects.filter(due_date__isnull=False).order_by("due_date")
-    return render(request, "todos_calendar.html", {"todos": todos})
+    # Pending and completed todos
+    pending_todos = Todo.objects.filter(due_date__isnull=False, done=False).order_by("due_date")
+    completed_todos = Todo.objects.filter(due_date__isnull=False, done=True).order_by("due_date")
+
+    # Group todos by month
+    def group_by_month(todos):
+        grouped = {}
+        for todo in todos:
+            month = todo.due_date.strftime("%B %Y")  # e.g., "October 2025"
+            grouped.setdefault(month, []).append(todo)
+        return grouped
+
+    grouped_pending = group_by_month(pending_todos)
+    grouped_completed = group_by_month(completed_todos)
+
+    context = {
+        "grouped_pending": grouped_pending,
+        "grouped_completed": grouped_completed,
+    }
+    return render(request, "todos_calendar.html", context)
