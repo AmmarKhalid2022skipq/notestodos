@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Dashboard Title -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold"
+            style="background: linear-gradient(90deg, #4e54c8, #8f94fb);
+                   -webkit-background-clip: text;
+                   color: transparent;
+                   text-shadow: 1px 1px 4px rgba(0,0,0,0.2);">
+            <i class="bi bi-kanban-fill"></i> Notes & Todos Dashboard
+        </h1>
+        <p class="lead text-muted mt-2">Track your tasks and notes efficiently with style!</p>
+    </div>
+
+    <!-- Search Bar -->
+    <form method="get" class="mb-4">
+        <div class="input-group input-group-lg">
+            <input type="text" name="q" class="form-control rounded-pill px-4"
+                   placeholder="Search notes or todos..."
+                   value="{{ query }}">
+            <button class="btn btn-primary rounded-pill px-4" type="submit">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <!-- Cards Section -->
+    <div class="row g-4">
+
+        <!-- Total Notes -->
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
+                <div class="mb-3">
+                    <i class="bi bi-journal-text display-4 text-info"></i>
+                </div>
+                <h2 class="fw-bold">{{ notes_count }}</h2>
+                <p class="text-muted mb-3">Total Notes</p>
+                <a class="btn btn-outline-info btn-sm rounded-pill px-4" href="/notes/">View Notes</a>
+            </div>
+        </div>
+
+        <!-- Total Todos -->
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
+                <div class="mb-3">
+                    <i class="bi bi-list-task display-4 text-success"></i>
+                </div>
+                <h2 class="fw-bold">{{ todos_count }}</h2>
+                <p class="text-muted mb-3">Total Todos</p>
+                <a class="btn btn-outline-success btn-sm rounded-pill px-4" href="/todos/">View Todos</a>
+            </div>
+        </div>
+
+        <!-- Completed Todos -->
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
+                <div class="mb-3">
+                    <i class="bi bi-check-circle display-4 text-primary"></i>
+                </div>
+                <h2 class="fw-bold">{{ completed_todos }}</h2>
+                <p class="text-muted mb-3">Completed Todos</p>
+            </div>
+        </div>
+
+        <!-- Calendar -->
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
+                <div class="mb-3">
+                    <i class="bi bi-calendar-event display-4 text-warning"></i>
+                </div>
+                <h2 class="fw-bold">Calendar</h2>
+                <p class="text-muted mb-3">View Todo Deadlines</p>
+                <a class="btn btn-outline-warning btn-sm rounded-pill px-4" href="/todos/calendar/">
+                    Open Calendar
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Search Results -->
+    {% if query %}
+    <div class="mt-5">
+        <h3 class="fw-bold">Search Results for "{{ query }}"</h3>
+
+        <h5 class="mt-4">Notes</h5>
+        <ul class="list-group mb-4">
+            {% for note in notes_results %}
+            <li class="list-group-item">
+                <b>{{ note.title }}</b>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No matching notes.</li>
+            {% endfor %}
+        </ul>
+
+        <h5>Todos</h5>
+        <ul class="list-group">
+            {% for todo in todos_results %}
+            <li class="list-group-item">
+                {{ todo.task }}
+                {% if todo.due_date %}
+                    <span class="badge bg-warning text-dark ms-2">{{ todo.due_date }}</span>
+                {% endif %}
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No matching todos.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        transform: translateY(-7px);
+    }
+    .transition {
+        transition: all 0.3s ease-in-out;
+    }
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    h1.display-4 {
+        background-size: 200% 200%;
+        animation: gradientShift 5s ease infinite;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="mb-4">📅 Todos Calendar</h2>
+
+{% if todos %}
+    <ul class="list-group">
+    {% for todo in todos %}
+        <li class="list-group-item d-flex justify-content-between">
+            {{ todo.task }}
+            <span class="badge bg-warning text-dark">{{ todo.due_date }}</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No todos with due dates yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 class="mb-4">📝 Notes</h2>
+<a href="/notes/add/" class="btn btn-primary mb-3">+ Add Note</a>
+
+<div class="row">
+    {% for note in notes %}
+        <div class="col-md-6">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5>{{ note.title }}</h5>
+                    <p>{{ note.content|truncatechars:100 }}</p>
+                    <a href="/notes/edit/{{ note.id }}/" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="/notes/delete/{{ note.id }}/" class="btn btn-sm btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No notes found.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

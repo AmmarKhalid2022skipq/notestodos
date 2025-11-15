@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 class="mb-4">📋 Todos</h2>
+<a href="/todos/add/" class="btn btn-success mb-3">+ Add Todo</a>
+
+<ul class="list-group">
+    {% for t in todos %}
+        <li class="list-group-item d-flex justify-content-between">
+            <div>
+                {% if t.done %}
+                    <span class="badge bg-success">Done</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+                {{ t.task }}
+            </div>
+
+            <div>
+                <a href="/todos/edit/{{ t.id }}/" class="btn btn-sm btn-warning">Edit</a>
+                <a href="/todos/delete/{{ t.id }}/" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </li>
+    {% empty %}
+        <p>No todos yet.</p>
+    {% endfor %}
+</ul>
+
+{% endblock %}
