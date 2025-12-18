@@ -1,139 +1,688 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container py-5">
 
-    <!-- Dashboard Title -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold"
-            style="background: linear-gradient(90deg, #4e54c8, #8f94fb);
-                   -webkit-background-clip: text;
-                   color: transparent;
-                   text-shadow: 1px 1px 4px rgba(0,0,0,0.2);">
-            <i class="bi bi-kanban-fill"></i> Notes & Todos Dashboard
-        </h1>
-        <p class="lead text-muted mt-2">Track your tasks and notes efficiently with style!</p>
-    </div>
-
-    <!-- Search Bar -->
-    <form method="get" class="mb-4">
-        <div class="input-group input-group-lg">
-            <input type="text" name="q" class="form-control rounded-pill px-4"
-                   placeholder="Search notes or todos..."
-                   value="{{ query }}">
-            <button class="btn btn-primary rounded-pill px-4" type="submit">
-                <i class="bi bi-search"></i> Search
-            </button>
-        </div>
-    </form>
-
-    <!-- Cards Section -->
-    <div class="row g-4">
-
-        <!-- Total Notes -->
-        <div class="col-md-3">
-            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
-                <div class="mb-3">
-                    <i class="bi bi-journal-text display-4 text-info"></i>
-                </div>
-                <h2 class="fw-bold">{{ notes_count }}</h2>
-                <p class="text-muted mb-3">Total Notes</p>
-                <a class="btn btn-outline-info btn-sm rounded-pill px-4" href="/notes/">View Notes</a>
-            </div>
-        </div>
-
-        <!-- Total Todos -->
-        <div class="col-md-3">
-            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
-                <div class="mb-3">
-                    <i class="bi bi-list-task display-4 text-success"></i>
-                </div>
-                <h2 class="fw-bold">{{ todos_count }}</h2>
-                <p class="text-muted mb-3">Total Todos</p>
-                <a class="btn btn-outline-success btn-sm rounded-pill px-4" href="/todos/">View Todos</a>
-            </div>
-        </div>
-
-        <!-- Completed Todos -->
-        <div class="col-md-3">
-            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
-                <div class="mb-3">
-                    <i class="bi bi-check-circle display-4 text-primary"></i>
-                </div>
-                <h2 class="fw-bold">{{ completed_todos }}</h2>
-                <p class="text-muted mb-3">Completed Todos</p>
-            </div>
-        </div>
-
-        <!-- Calendar -->
-        <div class="col-md-3">
-            <div class="card border-0 rounded-4 hover-shadow transition text-center p-4" style="background: #f8f9fa;">
-                <div class="mb-3">
-                    <i class="bi bi-calendar-event display-4 text-warning"></i>
-                </div>
-                <h2 class="fw-bold">Calendar</h2>
-                <p class="text-muted mb-3">View Todo Deadlines</p>
-                <a class="btn btn-outline-warning btn-sm rounded-pill px-4" href="/todos/calendar/">
-                    Open Calendar
-                </a>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Search Results -->
-    {% if query %}
-    <div class="mt-5">
-        <h3 class="fw-bold">Search Results for "{{ query }}"</h3>
-
-        <h5 class="mt-4">Notes</h5>
-        <ul class="list-group mb-4">
-            {% for note in notes_results %}
-            <li class="list-group-item">
-                <b>{{ note.title }}</b>
-            </li>
-            {% empty %}
-            <li class="list-group-item text-muted">No matching notes.</li>
-            {% endfor %}
-        </ul>
-
-        <h5>Todos</h5>
-        <ul class="list-group">
-            {% for todo in todos_results %}
-            <li class="list-group-item">
-                {{ todo.task }}
-                {% if todo.due_date %}
-                    <span class="badge bg-warning text-dark ms-2">{{ todo.due_date }}</span>
-                {% endif %}
-            </li>
-            {% empty %}
-            <li class="list-group-item text-muted">No matching todos.</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
-
+<!-- Modern Dashboard Hero Section -->
+<div class="dashboard-hero mb-6" style="padding: 32px 0; margin-bottom: 48px;">
+    <h1 style="font-size: 42px; color: #1e293b; margin-bottom: 12px; font-weight: 700;">
+        📝 Welcome to Your Smart Notes & Todos
+    </h1>
+    <p style="font-size: 18px; color: #64748b; margin: 0; line-height: 1.6;">
+        Organize your thoughts, manage your tasks, and boost your productivity. Add your notes and todos to get started, or explore your existing items below.
+    </p>
 </div>
 
-<!-- Custom Styles -->
+<!-- Enhanced Search Bar -->
+<form method="get" class="mb-6">
+    <div style="max-width: 700px; margin-bottom: 40px;">
+        <div style="display: flex; gap: 8px;">
+            <input type="text" name="q" class="form-control" placeholder="🔍 Search notes or todos..."
+                   value="{{ query }}" style="border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; font-size: 14px; flex: 1;">
+            <button type="submit" class="btn btn-success" style="padding: 12px 24px; border-radius: 10px; font-weight: 600;">Search</button>
+        </div>
+    </div>
+</form>
+
+<!-- ==================== REMINDERS SECTION - MOVED TO TOP ==================== -->
+<!-- Reminders Card - Now at top for visibility -->
+<div class="mb-6">
+    <div class="card" style="border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);">
+        <div class="card-body p-5">
+            <h5 style="color: #1e293b; font-weight: 600; margin-bottom: 20px;">🔔 Reminders</h5>
+
+            {% if overdue_reminders %}
+                <div style="margin-bottom: 24px;">
+                    <div style="font-size: 12px; color: #dc2626; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 12px;">⚠️ Overdue</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        {% for r in overdue_reminders|slice:":3" %}
+                            <a href="{% url 'todos_edit' r.id %}" style="display: block; padding: 12px; background: #fee2e2; border-radius: 8px; text-decoration: none; border-left: 3px solid #dc2626; transition: all 0.3s ease;">
+                                <strong style="color: #991b1b; font-size: 13px;">{{ r.task }}</strong>
+                                <div style="font-size: 11px; color: #b91c1c; margin-top: 4px;">{{ r.reminder|date:"M d, Y H:i" }}</div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if upcoming_reminders %}
+                <div>
+                    <div style="font-size: 12px; color: #0369a1; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 12px;">📅 Upcoming</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        {% for r in upcoming_reminders|slice:":3" %}
+                            <a href="{% url 'todos_edit' r.id %}" style="display: block; padding: 12px; background: #f0f9ff; border-radius: 8px; text-decoration: none; border-left: 3px solid #3b82f6; transition: all 0.3s ease;">
+                                <strong style="color: #1e40af; font-size: 13px;">{{ r.task }}</strong>
+                                <div style="font-size: 11px; color: #0369a1; margin-top: 4px;">{{ r.reminder|date:"M d, Y H:i" }}</div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div style="padding: 24px; background: #f8fafc; border-radius: 8px; text-align: center;">
+                    <p style="color: #94a3b8; margin: 0; font-size: 13px;">✨ No upcoming reminders</p>
+                </div>
+            {% endif %}
+
+            <a href="{% url 'todos_calendar' %}" style="display: inline-block; margin-top: 16px; color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 13px;">View calendar →</a>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FEATURE SECTIONS ==================== -->
+
+<!-- 1. TODAY'S FOCUS Section -->
+{% if today_todos %}
+<div class="mb-6">
+    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 24px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+        <h5 style="color: #92400e; font-weight: 600; margin: 0 0 16px 0;">📌 Today's Focus</h5>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            {% for todo in today_todos|slice:":5" %}
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <a href="{% url 'todos_edit' todo.id %}" style="color: #1e293b; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            {% if todo.is_important %}<span style="font-size: 18px; color: #f59e0b;">⭐</span>{% endif %}
+                            {{ todo.task }}
+                        </a>
+                        {% if todo.due_date %}
+                            <div style="font-size: 12px; color: #92400e; margin-top: 4px;">⏰ Due: {{ todo.due_date|date:"M d, Y" }}</div>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="{% url 'todos_edit' todo.id %}" style="display: inline; margin-left: 12px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="done" value="on">
+                        <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">✓ Done</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 2. PRIORITY MATRIX (Eisenhower Box) Section -->
+<div class="mb-6">
+    <h5 style="color: #1e293b; font-weight: 600; margin-bottom: 16px;">⚡ Priority Matrix (Important Tasks)</h5>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+
+        <!-- Urgent & Important (Full Width) -->
+        <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); padding: 16px; border-radius: 12px; border-left: 4px solid #dc2626;">
+            <h6 style="color: #991b1b; font-weight: 600; margin: 0 0 12px 0; font-size: 13px;">🔴 Urgent & Important</h6>
+            {% if important_urgent %}
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    {% for todo in important_urgent|slice:":3" %}
+                        <a href="{% url 'todos_edit' todo.id %}" style="padding: 8px; background: rgba(255,255,255,0.6); border-radius: 6px; text-decoration: none; color: #1e293b; font-size: 12px; border-left: 2px solid #dc2626; display: flex; align-items: center; gap: 6px;">
+                            <span style="color: #f59e0b; font-size: 16px;">⭐</span>
+                            {{ todo.task|truncatechars:40 }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: #991b1b; font-size: 12px; margin: 0;">✓ All clear!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Summary Stats Cards -->
+<div class="row g-4 mb-6">
+    <!-- Notes Card -->
+    <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'notes_list' %}" style="text-decoration: none;">
+            <div class="stat-card" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">📝 Notes</div>
+                        <div style="font-size: 36px; color: white; font-weight: 700; margin-top: 8px;">{{ notes_count }}</div>
+                    </div>
+                    <div style="font-size: 48px; opacity: 0.3;">📝</div>
+                </div>
+                <div style="display: inline-block; margin-top: 16px; color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;">View all →</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Todos Card -->
+    <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'todos_list' %}" style="text-decoration: none;">
+            <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">✅ Todos</div>
+                        <div style="font-size: 36px; color: white; font-weight: 700; margin-top: 8px;">{{ todos_count }}</div>
+                    </div>
+                    <div style="font-size: 48px; opacity: 0.3;">✅</div>
+                </div>
+                <div style="display: inline-block; margin-top: 16px; color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;">View all →</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Completed Card -->
+    <div class="col-sm-6 col-lg-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">🎉 Completed</div>
+                    <div style="font-size: 36px; color: white; font-weight: 700; margin-top: 8px;">{{ completed_todos }}</div>
+                </div>
+                <div style="font-size: 48px; opacity: 0.3;">🎉</div>
+            </div>
+            {% if todos_count > 0 %}
+                <div style="margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.9);">
+                    ✨ Great Progress!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Calendar Card -->
+    <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'todos_calendar' %}" style="text-decoration: none;">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">📅 Calendar</div>
+                        <div style="font-size: 20px; color: white; font-weight: 700; margin-top: 8px;">View</div>
+                    </div>
+                    <div style="font-size: 48px; opacity: 0.3;">📅</div>
+                </div>
+                <div style="display: inline-block; margin-top: 16px; color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;">Open calendar →</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="row g-4">
+    <!-- Left: Search Results / Recent Items -->
+    <div class="col-lg-7">
+        <div class="card" style="border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);">
+            <div class="card-body p-5">
+                <h5 style="color: #1e293b; font-weight: 600; margin-bottom: 24px;">
+                    {% if query %}
+                        🔍 Search Results for "{{ query }}"
+                    {% endif %}
+                </h5>
+
+                {% if query %}
+                    <!-- Search Results -->
+                    {% if notes_results or todos_results %}
+                        {% if notes_results %}
+                            <div class="mb-5">
+                                <h6 style="color: #475569; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; margin-bottom: 12px;">📝 Notes</h6>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    {% for note in notes_results|slice:":5" %}
+                                        <a href="{% url 'notes_edit' note.id %}" style="display: block; padding: 12px 16px; background: #f8fafc; border-radius: 8px; text-decoration: none; transition: all 0.3s ease; border-left: 3px solid #6366f1;">
+                                            <strong style="color: #1e293b;">{{ note.title }}</strong>
+                                            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">{{ note.content|truncatechars:80 }}</div>
+                                            {% if note.created_at %}
+                                                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">{{ note.created_at|date:"M d, Y" }}</div>
+                                            {% endif %}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if todos_results %}
+                            <div>
+                                <h6 style="color: #475569; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; margin-bottom: 12px;">✅ Todos</h6>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    {% for todo in todos_results|slice:":5" %}
+                                        <a href="{% url 'todos_edit' todo.id %}" style="display: block; padding: 12px 16px; background: #f8fafc; border-radius: 8px; text-decoration: none; transition: all 0.3s ease; border-left: 3px solid #10b981;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+                                                    {% if todo.is_important %}<span style="color: #f59e0b; font-size: 16px;">⭐</span>{% endif %}
+                                                    <strong style="color: #1e293b;">{{ todo.task }}</strong>
+                                                </div>
+                                                {% if todo.done %}
+                                                    <span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ Done</span>
+                                                {% else %}
+                                                    <span style="background: #fef08a; color: #854d0e; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">⏳ Pending</span>
+                                                {% endif %}
+                                            </div>
+                                            {% if todo.due_date %}
+                                                <div style="font-size: 12px; color: #64748b; margin-top: 6px;">📅 Due: {{ todo.due_date|date:"M d, Y" }}</div>
+                                            {% endif %}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p style="color: #94a3b8; text-align: center; padding: 24px;">No results found for "{{ query }}"</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Quick Actions + Reminders -->
+    <div class="col-lg-5">
+        <!-- Quick Actions Card -->
+        <div class="card" style="border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); margin-bottom: 20px;">
+            <div class="card-body p-5">
+                <h5 style="color: #1e293b; font-weight: 600; margin-bottom: 20px;">⚡ Quick Actions</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <a href="{% url 'notes_add' %}" class="quick-btn" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600; font-size: 13px; transition: all 0.3s ease; display: block;">
+                        ➕ New Note
+                    </a>
+                    <a href="{% url 'todos_add' %}" class="quick-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600; font-size: 13px; transition: all 0.3s ease; display: block;">
+                        ➕ New Todo
+                    </a>
+                    <a href="{% url 'notes_list' %}" class="quick-btn" style="background: #f8fafc; color: #6366f1; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600; font-size: 13px; border: 2px solid #e2e8f0; transition: all 0.3s ease; display: block;">
+                        📝 All Notes
+                    </a>
+                    <a href="{% url 'todos_list' %}" class="quick-btn" style="background: #f8fafc; color: #10b981; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600; font-size: 13px; border: 2px solid #e2e8f0; transition: all 0.3s ease; display: block;">
+                        ✅ All Todos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reminders Card REMOVED - Now at top of dashboard -->
+    </div>
+</div>
+
 <style>
-    .hover-shadow:hover {
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        transform: translateY(-7px);
+    .stat-card {
+        padding: 24px;
+        border-radius: 12px;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        display: block;
     }
-    .transition {
-        transition: all 0.3s ease-in-out;
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     }
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+
+    .quick-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1) !important;
     }
-    h1.display-4 {
-        background-size: 200% 200%;
-        animation: gradientShift 5s ease infinite;
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    a[href]:not(.btn):hover {
+        opacity: 0.8;
+    }
+
+    .dashboard-header {
+        padding: 8px 0;
+    }
+
+    .dashboard-hero {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+        padding: 48px 32px;
+        border-radius: 16px;
+    }
+
+    .mb-6 {
+        margin-bottom: 40px;
+    }
+
+    /* Full Modal Popup Styles */
+    .reminder-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .reminder-modal {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.4s ease;
+    }
+
+    .reminder-modal-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 32px 24px;
+        border-radius: 16px 16px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .reminder-modal-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .close-modal-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .close-modal-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+    .reminder-modal-body {
+        padding: 32px 24px;
+    }
+
+    .reminder-detail-row {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .reminder-detail-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .reminder-detail-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .reminder-detail-value {
+        font-size: 16px;
+        color: #1e293b;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .reminder-modal-footer {
+        padding: 20px 24px;
+        background: #f8fafc;
+        border-top: 1px solid #e5e7eb;
+        border-radius: 0 0 16px 16px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .modal-btn {
+        flex: 1;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .modal-btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+
+    .modal-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .modal-btn-secondary {
+        background: #e5e7eb;
+        color: #1e293b;
+    }
+
+    .modal-btn-secondary:hover {
+        background: #d1d5db;
+    }
+
+    .activity-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+
+    .priority-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-badge-pending {
+        background: #fef08a;
+        color: #854d0e;
+    }
+
+    .status-badge-done {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(40px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
     }
 </style>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<script>
+    // Reminder Modal Popup System
+    document.addEventListener('DOMContentLoaded', function () {
+        let lastNotifiedIds = new Set();
+
+        function createModal(todoData) {
+            const overlay = document.createElement('div');
+            overlay.className = 'reminder-modal-overlay';
+
+            const isOverdue = todoData.isOverdue;
+            const statusText = isOverdue ? 'OVERDUE' : 'UPCOMING';
+            const headerGradient = isOverdue
+                ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+
+            const dueDateStr = new Date(todoData.due_date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const reminderDateStr = new Date(todoData.reminder).toLocaleString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            overlay.innerHTML = `
+                <div class="reminder-modal">
+                    <div class="reminder-modal-header" style="background: ${headerGradient}">
+                        <h2>
+                            <span style="font-size: 28px;">${isOverdue ? '⏰' : '🔔'}</span>
+                            ${isOverdue ? 'OVERDUE' : 'Reminder'}: ${todoData.task}
+                        </h2>
+                        <button class="close-modal-btn" onclick="this.closest('.reminder-modal-overlay').remove();">×</button>
+                    </div>
+
+                    <div class="reminder-modal-body">
+                        <div class="reminder-detail-row">
+                            <div class="reminder-detail-label">📝 Task Description</div>
+                            <div class="reminder-detail-value">${todoData.task}</div>
+                        </div>
+
+                        <div class="reminder-detail-row">
+                            <div class="reminder-detail-label">⏰ Reminder Time</div>
+                            <div class="reminder-detail-value" style="color: ${isOverdue ? '#dc2626' : '#0369a1'};">
+                                ${reminderDateStr}
+                                ${isOverdue ? '<span style="margin-left: 8px; color: #dc2626; font-weight: 700;">[OVERDUE]</span>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="reminder-detail-row">
+                            <div class="reminder-detail-label">📅 Due Date</div>
+                            <div class="reminder-detail-value">${dueDateStr}</div>
+                        </div>
+
+                        <div class="reminder-detail-row">
+                            <div class="reminder-detail-label">🏷️ Activity</div>
+                            <span class="activity-badge">${todoData.activity}</span>
+                        </div>
+
+                        <div class="reminder-detail-row">
+                            <div class="reminder-detail-label">⭐ Priority & Status</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                ${todoData.is_important ? '<span class="priority-badge">⭐ Important</span>' : ''}
+                                <span class="status-badge ${todoData.done ? 'status-badge-done' : 'status-badge-pending'}">
+                                    ${todoData.done ? '✓ Completed' : '⏳ Pending'}
+                                </span>
+                            </div>
+                        </div>
+
+                        ${todoData.created_at ? `
+                        <div class="reminder-detail-row">
+                            <div class="reminder-detail-label">📆 Created On</div>
+                            <div class="reminder-detail-value">${new Date(todoData.created_at).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="reminder-modal-footer">
+                        <button class="modal-btn modal-btn-primary" onclick="window.location.href = '/todos/edit/${todoData.id}/';">
+                            ✏️ Edit Todo
+                        </button>
+                        <button class="modal-btn modal-btn-secondary" onclick="this.closest('.reminder-modal-overlay').remove();">
+                            ✕ Dismiss
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Close on overlay click (outside modal)
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+
+            document.body.appendChild(overlay);
+        }
+
+        // Poll for soon/upcoming reminders every 30 seconds
+        function pollReminders() {
+            fetch('{% url "reminders_status" %}')
+                .then(response => response.json())
+                .then(data => {
+                    // Check for soon reminders (within next hour)
+                    data.soon.forEach(reminder => {
+                        if (!lastNotifiedIds.has(reminder.id)) {
+                            createModal({
+                                id: reminder.id,
+                                task: reminder.task,
+                                reminder: reminder.reminder,
+                                due_date: reminder.due_date || new Date().toISOString(),
+                                activity: reminder.activity,
+                                is_important: reminder.is_important,
+                                done: reminder.done,
+                                created_at: reminder.created_at,
+                                isOverdue: false
+                            });
+                            lastNotifiedIds.add(reminder.id);
+                        }
+                    });
+
+                    // Check overdue reminders
+                    data.overdue.forEach(reminder => {
+                        if (!lastNotifiedIds.has('overdue_' + reminder.id)) {
+                            createModal({
+                                id: reminder.id,
+                                task: reminder.task,
+                                reminder: reminder.reminder,
+                                due_date: reminder.due_date || new Date().toISOString(),
+                                activity: reminder.activity,
+                                is_important: reminder.is_important,
+                                done: reminder.done,
+                                created_at: reminder.created_at,
+                                isOverdue: true
+                            });
+                            lastNotifiedIds.add('overdue_' + reminder.id);
+                        }
+                    });
+                })
+                .catch(err => console.log('Reminder polling error:', err));
+        }
+
+        // Initial poll and then every 30 seconds
+        pollReminders();
+        setInterval(pollReminders, 30000);
+    });
+</script>
+
+
 {% endblock %}

@@ -1,62 +1,94 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Note, Todo
-from .forms import NoteForm, TodoForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.http import JsonResponse
+from .services import NoteService, TodoService
+
+note_service = NoteService()
+todo_service = TodoService()
 
 # ---------------------------
 # Dashboard
 # ---------------------------
 def dashboard(request):
     query = request.GET.get("q", "")
+    now = timezone.now()
 
-    notes_count = Note.objects.count()
-    todos_count = Todo.objects.count()
-    completed_todos = Todo.objects.filter(done=True).count()
+    # Get base stats and search results
+    stats = todo_service.get_dashboard_stats(query)
 
-    notes_results = Note.objects.filter(title__icontains=query) if query else []
-    todos_results = Todo.objects.filter(task__icontains=query) if query else []
+    # Get reminders
+    reminders = todo_service.get_reminders(now)
+
+    # Get new features data
+    # 1. TODAY'S FOCUS
+    today_todos = todo_service.get_daily_focus(now)
+    
+    # 2. PRIORITY MATRIX
+    matrix = todo_service.get_priority_matrix(now)
 
     context = {
-        "notes_count": notes_count,
-        "todos_count": todos_count,
-        "completed_todos": completed_todos,
+        "notes_count": stats["notes_count"],
+        "todos_count": stats["todos_count"],
+        "completed_todos": stats["completed_todos"],
         "query": query,
-        "notes_results": notes_results,
-        "todos_results": todos_results,
+        "notes_results": stats["notes_results"],
+        "todos_results": stats["todos_results"],
+        
+        "upcoming_reminders": reminders["upcoming"],
+        "overdue_reminders": reminders["overdue"],
+        "soon_reminders": reminders["soon"],
+        "overdue_count": reminders["overdue_count"],
+        "soon_count": reminders["soon_count"],
+        "show_reminder_alert": (reminders["overdue_count"] > 0) or (reminders["soon_count"] > 0),
+
+        # New features
+        "today_todos": today_todos,
+        "important_urgent": matrix["important_urgent"],
+        "important_not_urgent": matrix["important_not_urgent"],
+        "all_important": matrix["all_important"],
     }
     return render(request, "dashboard.html", context)
+
+
+def reminders_status(request):
+    """AJAX endpoint returning JSON with overdue and soon reminders for client polling."""
+    now = timezone.now()
+    data = todo_service.get_reminders_status_data(now)
+    return JsonResponse(data)
 
 
 # ---------------------------
 # Notes CRUD
 # ---------------------------
 def notes_list(request):
-    notes = Note.objects.all().order_by("-created_at")
+    notes = note_service.list_all()
     return render(request, "notes_list.html", {"notes": notes})
 
 def notes_add(request):
     if request.method == "POST":
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            form.save()
+        success, result = note_service.create(request.POST)
+        if success:
             return redirect("notes_list")
+        form = result
     else:
-        form = NoteForm()
+        form = note_service.form_class()
     return render(request, "notes_form.html", {"form": form})
 
 def notes_edit(request, id):
-    note = get_object_or_404(Note, id=id)
+    # Retrieve object first to ensure 404 if not found (handled by get_by_id)
+    note = note_service.get_by_id(id)
+    
     if request.method == "POST":
-        form = NoteForm(request.POST, instance=note)
-        if form.is_valid():
-            form.save()
+        success, result = note_service.update(id, request.POST)
+        if success:
             return redirect("notes_list")
+        form = result
     else:
-        form = NoteForm(instance=note)
+        form = note_service.form_class(instance=note)
     return render(request, "notes_form.html", {"form": form})
 
 def notes_delete(request, id):
-    note = get_object_or_404(Note, id=id)
-    note.delete()
+    note_service.delete(id)
     return redirect("notes_list")
 
 
@@ -64,33 +96,32 @@ def notes_delete(request, id):
 # Todos CRUD
 # ---------------------------
 def todos_list(request):
-    todos = Todo.objects.all().order_by("-created_at")
+    todos = todo_service.list_all()
     return render(request, "todos_list.html", {"todos": todos})
 
 def todos_add(request):
     if request.method == "POST":
-        form = TodoForm(request.POST)
-        if form.is_valid():
-            form.save()
+        success, result = todo_service.create(request.POST)
+        if success:
             return redirect("todos_list")
+        form = result
     else:
-        form = TodoForm()
+        form = todo_service.form_class()
     return render(request, "todos_form.html", {"form": form})
 
 def todos_edit(request, id):
-    todo = get_object_or_404(Todo, id=id)
+    todo = todo_service.get_by_id(id)
     if request.method == "POST":
-        form = TodoForm(request.POST, instance=todo)
-        if form.is_valid():
-            form.save()
+        success, result = todo_service.update(id, request.POST)
+        if success:
             return redirect("todos_list")
+        form = result
     else:
-        form = TodoForm(instance=todo)
+        form = todo_service.form_class(instance=todo)
     return render(request, "todos_form.html", {"form": form})
 
 def todos_delete(request, id):
-    todo = get_object_or_404(Todo, id=id)
-    todo.delete()
+    todo_service.delete(id)
     return redirect("todos_list")
 
 
@@ -98,23 +129,5 @@ def todos_delete(request, id):
 # Todos Calendar
 # ---------------------------
 def todos_calendar(request):
-    # Pending and completed todos
-    pending_todos = Todo.objects.filter(due_date__isnull=False, done=False).order_by("due_date")
-    completed_todos = Todo.objects.filter(due_date__isnull=False, done=True).order_by("due_date")
-
-    # Group todos by month
-    def group_by_month(todos):
-        grouped = {}
-        for todo in todos:
-            month = todo.due_date.strftime("%B %Y")  # e.g., "October 2025"
-            grouped.setdefault(month, []).append(todo)
-        return grouped
-
-    grouped_pending = group_by_month(pending_todos)
-    grouped_completed = group_by_month(completed_todos)
-
-    context = {
-        "grouped_pending": grouped_pending,
-        "grouped_completed": grouped_completed,
-    }
+    context = todo_service.get_calendar_data()
     return render(request, "todos_calendar.html", context)

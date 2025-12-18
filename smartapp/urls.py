@@ -18,6 +18,9 @@ urlpatterns = [
     # Todos calendar
     path("todos/calendar/", views.todos_calendar, name="todos_calendar"),
 
+    # Reminders JSON endpoint for live polling
+    path("reminders/status/", views.reminders_status, name="reminders_status"),
+
     # Admin
     path("admin/", admin.site.urls),
 ]
