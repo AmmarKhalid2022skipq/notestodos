@@ -678,9 +678,9 @@
                 .catch(err => console.log('Reminder polling error:', err));
         }
 
-        // Initial poll and then every 30 seconds
+        // Initial poll and then every 15 seconds
         pollReminders();
-        setInterval(pollReminders, 30000);
+        setInterval(pollReminders, 15000);
     });
 </script>
 

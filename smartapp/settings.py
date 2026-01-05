@@ -4,9 +4,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "replace-this-with-any-random-string"
 
-DEBUG = True
+# For local testing of the production-style error pages, set DEBUG=False and add localhost hosts.
+# Revert DEBUG=True before deploying to development if you prefer the debug pages.
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# Allow common local hosts and the test client host so tests work when DEBUG=False
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
 
 
 INSTALLED_APPS = [

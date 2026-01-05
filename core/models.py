@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class Note(models.Model):
     title = models.CharField(max_length=200)
@@ -44,6 +46,17 @@ class Todo(models.Model):
         if self.activity == self.ACTIVITY_OTHER and self.activity_custom:
             return self.activity_custom
         return dict(self.ACTIVITY_CHOICES).get(self.activity, self.activity)
+
+    def clean(self):
+        """Model-level validation for due_date."""
+        super().clean()
+        if self.due_date:
+            # Prevent obviously wrong years (e.g. year 0343 shown in the screenshot)
+            if self.due_date.year < 1900:
+                raise ValidationError({'due_date': 'Please provide a valid due date (year must be >= 1900).'})
+            # Prevent dates in the past
+            if self.due_date < timezone.now().date():
+                raise ValidationError({'due_date': 'Due date cannot be in the past.'})
 
     def __str__(self):
         # show custom activity when provided
