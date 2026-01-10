@@ -1,97 +1,95 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="row">
-    <div class="col-lg-8 mx-auto">
-        <h2>{{ form.instance.id|yesno:"✏️ Edit Todo,➕ Add Todo" }}</h2>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="mb-4 text-center">{{ form.instance.id|yesno:"✏️ Edit Task,✨ New Task" }}</h2>
 
-        <div class="card p-5">
+        <div class="card p-4 p-md-5"
+            style="border: none; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05);">
             <form method="post">
                 {% csrf_token %}
 
-                <!-- Task Field -->
-                <div class="form-group">
-                    <label for="{{ form.task.id_for_label }}">📌 Task Description</label>
+                <!-- Task Description -->
+                <div class="form-group mb-4">
+                    <label for="{{ form.task.id_for_label }}" class="text-uppercase text-secondary fw-bold"
+                        style="font-size: 13px; letter-spacing: 0.5px;">📌 What needs to be done?</label>
                     {{ form.task }}
                     {% if form.task.errors %}
-                        <div class="error-message">{{ form.task.errors.0 }}</div>
+                    <div class="text-danger small mt-1">{{ form.task.errors.0 }}</div>
                     {% endif %}
                 </div>
 
-                <!-- Done Checkbox -->
-                <div class="form-check">
-                    {{ form.done }}
-                    <label for="{{ form.done.id_for_label }}" class="form-check-label">
-                        Mark as completed
-                    </label>
-                    {% if form.done.errors %}
-                        <div class="error-message">{{ form.done.errors.0 }}</div>
-                    {% endif %}
-                </div>
-
-                <!-- Important Marker Checkbox -->
-                <div class="form-check" style="background-color: #fef3c7; border: 2px solid #fcd34d;">
-                    {{ form.is_important }}
-                    <label for="{{ form.is_important.id_for_label }}" class="form-check-label">
-                        ⭐ Mark as Important
-                    </label>
-                    {% if form.is_important.errors %}
-                        <div class="error-message">{{ form.is_important.errors.0 }}</div>
-                    {% endif %}
-                </div>
-
-                <!-- Due Date Field -->
-                <div class="form-group">
-                    <label for="{{ form.due_date.id_for_label }}">📅 Due Date</label>
-                    <div class="input-group">
-                        {{ form.due_date }}
-                    </div>
-                    {% if form.due_date.errors %}
-                        <div class="error-message">{{ form.due_date.errors.0 }}</div>
-                    {% endif %}
-                </div>
-
-                <!-- Activity Selection with Emojis -->
-                <div class="form-group">
-                    <label for="{{ form.activity.id_for_label }}">🎯 Activity Type</label>
-                    <div class="activity-selector">
-                        {{ form.activity }}
-                    </div>
-                    <div class="activity-preview mt-3">
-                        <span style="font-size: 12px; color: #64748b;">Selected activity:</span>
-                        <div id="activity-emoji-display" class="mt-2">
-                            <span class="activity-badge" id="emoji-badge">🏪</span>
+                <div class="row g-4 mb-4">
+                    <!-- Activity Type -->
+                    <div class="col-md-7">
+                        <label for="{{ form.activity.id_for_label }}" class="text-uppercase text-secondary fw-bold"
+                            style="font-size: 13px; letter-spacing: 0.5px;">🎯 Context / Category</label>
+                        <div class="d-flex gap-3 align-items-center mt-1">
+                            <div class="activity-selector flex-grow-1">
+                                {{ form.activity }}
+                            </div>
+                            <div id="emoji-display" class="d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px; background: #fef9c3; border-radius: 12px; font-size: 28px; border: 2px solid #fde047; box-shadow: 0 4px 10px rgba(253, 224, 71, 0.2);">
+                                ✨
+                            </div>
                         </div>
                     </div>
-                    {% if form.activity.errors %}
-                        <div class="error-message">{{ form.activity.errors.0 }}</div>
-                    {% endif %}
+
+                    <!-- Due Date -->
+                    <div class="col-md-5">
+                        <label for="{{ form.due_date.id_for_label }}" class="text-uppercase text-secondary fw-bold"
+                            style="font-size: 13px; letter-spacing: 0.5px;">📅 Due Date</label>
+                        <div class="mt-1">
+                            {{ form.due_date }}
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Custom Activity Field -->
-                <div class="form-group" id="custom-activity-row" style="display: none;">
-                    <label for="{{ form.activity_custom.id_for_label }}">✨ Custom Activity</label>
+                <!-- Custom Activity (Hidden by default) -->
+                <div class="form-group mb-4" id="custom-activity-row" style="display: none;">
+                    <label for="{{ form.activity_custom.id_for_label }}" class="text-uppercase text-secondary fw-bold"
+                        style="font-size: 13px; letter-spacing: 0.5px;">✨ Custom Category Name</label>
                     {{ form.activity_custom }}
-                    <div class="form-text">Create your own activity label</div>
-                    {% if form.activity_custom.errors %}
-                        <div class="error-message">{{ form.activity_custom.errors.0 }}</div>
-                    {% endif %}
                 </div>
 
-                <!-- Reminder Field -->
-                <div class="form-group">
-                    <label for="{{ form.reminder.id_for_label }}">🔔 Set Reminder</label>
-                    {{ form.reminder }}
-                    <div class="form-text">Optional: Set a date and time to receive a reminder</div>
-                    {% if form.reminder.errors %}
-                        <div class="error-message">{{ form.reminder.errors.0 }}</div>
-                    {% endif %}
+                <div class="p-3 mb-4" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-check-label fw-semibold text-dark">Options</label>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2">
+                        <!-- Important Toggle -->
+                        <div class="form-check form-switch">
+                            {{ form.is_important }}
+                            <label class="form-check-label" for="{{ form.is_important.id_for_label }}">Mark as High
+                                Priority ⭐</label>
+                        </div>
+
+                        <!-- Done Toggle -->
+                        <div class="form-check form-switch">
+                            {{ form.done }}
+                            <label class="form-check-label" for="{{ form.done.id_for_label }}">Mark as Completed
+                                ✅</label>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="mt-5 text-center">
-                    <button type="submit" class="btn btn-success btn-lg">
-                        💾 Save Todo
+                <!-- Reminder -->
+                <div class="form-group mb-5">
+                    <label for="{{ form.reminder.id_for_label }}" class="text-uppercase text-secondary fw-bold"
+                        style="font-size: 13px; letter-spacing: 0.5px;">🔔 Reminder (Optional)</label>
+                    <div class="mt-1">
+                        {{ form.reminder }}
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="{% url 'todos_list' %}" class="btn btn-light"
+                        style="font-weight: 600; color: #64748b;">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5" style="border-radius: 10px; font-weight: 700;">
+                        💾 Save Task
                     </button>
                 </div>
             </form>
@@ -100,112 +98,90 @@
 </div>
 
 <style>
-    .activity-selector select {
-        width: 100%;
-    }
-
-    .activity-preview {
-        padding: 16px;
-        background-color: #f8fafc;
-        border-radius: 10px;
-        border: 2px solid #e2e8f0;
-    }
-
-    #emoji-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-        font-size: 32px;
-        border: 3px solid #fcd34d;
-        box-shadow: 0 4px 15px rgba(252, 211, 77, 0.3);
-        animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
-    }
-
+    /* Modern inputs */
     input[type="text"],
     input[type="date"],
     input[type="datetime-local"],
     select {
         width: 100%;
+        padding: 12px 15px;
         border: 2px solid #e2e8f0;
         border-radius: 10px;
-        padding: 12px 16px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        background-color: #f8fafc;
+        font-size: 15px;
+        transition: all 0.2s;
+        background: #fff;
     }
 
     input[type="text"]:focus,
+    select:focus,
     input[type="date"]:focus,
-    input[type="datetime-local"]:focus,
-    select:focus {
+    input[type="datetime-local"]:focus {
         border-color: #3b82f6;
-        background-color: white;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         outline: none;
     }
 
-    .btn-lg {
-        padding: 16px 48px;
-        font-size: 16px;
-        width: 100%;
+    /* Bigger emoji animation */
+    #emoji-display {
+        transition: transform 0.2s;
+    }
+
+    #emoji-display.pop {
+        transform: scale(1.2);
+    }
+
+    /* Custom switch styling overrides Bootstrap defaults a bit */
+    .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        cursor: pointer;
+    }
+
+    .form-switch .form-check-input:checked {
+        background-color: #10b981;
+        border-color: #10b981;
     }
 </style>
 
 <script>
-(function(){
-    // Emoji map for activities
-    const emojiMap = {
-        'shopping': '🛒',
-        'meeting': '👥',
-        'outdoor': '🌳',
-        'workout': '💪',
-        'custom': '✨'
-    };
+    (function () {
+        const emojiMap = {
+            'shopping': '🛒',
+            'meeting': '👥',
+            'outdoor': '🌳',
+            'workout': '💪',
+            'custom': '✨'
+        };
 
-    function updateEmojiDisplay() {
         const select = document.getElementById('id_activity');
-        const badge = document.getElementById('emoji-badge');
+        const display = document.getElementById('emoji-display');
         const customRow = document.getElementById('custom-activity-row');
 
-        if (!select) return;
+        function updateUI() {
+            if (!select) return;
+            const val = select.value;
+            const emoji = emojiMap[val] || '⚡';
 
-        const value = select.value;
-        const emoji = emojiMap[value] || '✨';
+            // Animate
+            display.classList.remove('pop');
+            void display.offsetWidth; // trigger reflow
+            display.textContent = emoji;
+            display.classList.add('pop');
 
-        // Update emoji with animation
-        badge.style.animation = 'none';
-        setTimeout(() => {
-            badge.textContent = emoji;
-            badge.style.animation = 'float 3s ease-in-out infinite';
-        }, 10);
-
-        // Show custom activity field if needed
-        if (value === 'custom') {
-            customRow.style.display = '';
-        } else {
-            customRow.style.display = 'none';
-            const input = document.getElementById('id_activity_custom');
-            if (input) input.value = '';
+            // Toggle custom field
+            if (val === 'custom') {
+                customRow.style.display = 'block';
+            } else {
+                customRow.style.display = 'none';
+            }
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', function(){
-        const select = document.getElementById('id_activity');
         if (select) {
-            select.addEventListener('change', updateEmojiDisplay);
-            updateEmojiDisplay(); // initial
+            select.addEventListener('change', updateUI);
+            // Init
+            updateUI();
         }
-    });
-})();
+    })();
 </script>
 
 {% endblock %}

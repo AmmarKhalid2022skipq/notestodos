@@ -6,7 +6,7 @@ SECRET_KEY = "replace-this-with-any-random-string"
 
 # For local testing of the production-style error pages, set DEBUG=False and add localhost hosts.
 # Revert DEBUG=True before deploying to development if you prefer the debug pages.
-DEBUG = False
+DEBUG = True
 
 # Allow common local hosts and the test client host so tests work when DEBUG=False
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
@@ -82,3 +82,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Auth Redirects
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard"
+LOGOUT_REDIRECT_URL = "login"

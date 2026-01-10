@@ -1,8 +1,10 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Note(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=200)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -12,8 +14,22 @@ class Note(models.Model):
 
 
 class Todo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     task = models.CharField(max_length=255)
     done = models.BooleanField(default=False)
+    
+    # Kanban Status
+    STATUS_PENDING = 'PENDING'
+    STATUS_IN_PROGRESS = 'IN_PROGRESS'
+    STATUS_COMPLETED = 'COMPLETED'
+    
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'To Do'),
+        (STATUS_IN_PROGRESS, 'In Progress'),
+        (STATUS_COMPLETED, 'Done'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+
     created_at = models.DateTimeField(auto_now_add=True)
     due_date = models.DateField(null=True, blank=True)  # optional due date
 

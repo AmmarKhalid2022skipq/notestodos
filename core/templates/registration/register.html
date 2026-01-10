@@ -1,0 +1,104 @@
+{% extends "auth_layout.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-split">
+        <!-- Visual Side -->
+        <div class="auth-right" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <div class="shape-1"></div>
+            <div class="shape-2"></div>
+
+            <div class="cta-text text-center">
+                <div style="font-size: 60px; margin-bottom: 20px;">🚀</div>
+                <h2 style="font-size: 36px; margin-bottom: 24px; color: white;">Start your journey</h2>
+                <p
+                    style="font-size: 18px; color: rgba(255,255,255,0.9); line-height: 1.6; max-width: 300px; margin: 0 auto;">
+                    Create an account to unlock your personal workspace.
+                </p>
+            </div>
+        </div>
+
+        <!-- Form Side -->
+        <div class="auth-left">
+            <div style="font-size: 32px; margin-bottom: 20px;">✨</div>
+            <h2 style="color: #1e293b; margin-bottom: 10px;">Create an account</h2>
+            <p style="color: #64748b; margin-bottom: 40px; line-height: 1.6;">
+                Free forever. No credit card needed.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="border-radius: 10px; font-size: 14px;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                {% for field in form %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" style="...">{{ field.label }}</label>
+                    <div style="position: relative;">
+                        {{ field }}
+                    </div>
+                    {% if field.help_text %}
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 6px;">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                    <div style="color: #ef4444; font-size: 13px; margin-top: 5px;">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit"
+                    style="width: 100%; padding: 14px; background: #10b981; color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 16px; margin-top: 20px; cursor: pointer; transition: all 0.3s ease;">
+                    Create Account
+                </button>
+            </form>
+
+            <div style="margin-top: 30px; text-align: center; color: #64748b; font-size: 14px;">
+                Already have an account?
+                <a href="{% url 'login' %}" style="color: #10b981; text-decoration: none; font-weight: 600;">Sign in</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: #f8fafc;
+        font-size: 15px;
+        transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus {
+        border-color: #10b981;
+        background: white;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    }
+
+    button:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+</style>
+{% endblock %}

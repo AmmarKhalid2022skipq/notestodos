@@ -1,132 +1,129 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="mb-5">
+<!-- SortableJS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+<div class="mb-4">
     <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin: 0;">✅ Your Todos</h2>
-        <a href="/todos/add/" class="btn btn-success">➕ Add Todo</a>
+        <h2 style="margin: 0;">📋 Kanban Board</h2>
+        <a href="{% url 'todos_add' %}" class="btn btn-success">➕ Add Task</a>
     </div>
 </div>
 
-{% if todos %}
-    <div class="row g-4">
-        {% for t in todos %}
-            <div class="col-lg-6">
-                <div class="card todo-card" style="height: 100%; transition: all 0.3s ease;">
-                    <div class="card-body">
-                        <!-- Status Badge & Task -->
-                        <div class="d-flex align-items-start justify-content-between mb-3">
-                            <div style="flex: 1;">
-                                {% if t.done %}
-                                    <span class="badge bg-success" style="padding: 8px 12px; font-size: 12px; text-transform: uppercase;">✓ Completed</span>
-                                {% else %}
-                                    <span class="badge bg-warning text-dark" style="padding: 8px 12px; font-size: 12px; text-transform: uppercase;">⏳ Pending</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Task Title -->
-                        <h5 class="card-title mb-3" style="color: #1e293b; font-weight: 600; line-height: 1.5;">
-                            {{ t.task }}
-                        </h5>
-
-                        <!-- Activity Badge -->
-                        <div class="d-flex align-items-center mb-4">
-                            <span style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">Activity:</span>
-                            <span class="activity-oval" style="margin-left: 12px;">
-                                {% if t.activity == 'shopping' %}
-                                    🛒
-                                {% elif t.activity == 'meeting' %}
-                                    👥
-                                {% elif t.activity == 'outdoor' %}
-                                    🌳
-                                {% elif t.activity == 'workout' %}
-                                    💪
-                                {% elif t.activity == 'custom' and t.activity_custom %}
-                                    ✨
-                                {% else %}
-                                    ✨
-                                {% endif %}
-                            </span>
-                            <small style="margin-left: 12px; color: #475569; font-weight: 500;">
-                                {% if t.activity == 'custom' and t.activity_custom %}
-                                    {{ t.activity_custom }}
-                                {% else %}
-                                    {{ t.get_activity_display }}
-                                {% endif %}
-                            </small>
-                        </div>
-
-                        <!-- Due Date -->
-                        {% if t.due_date %}
-                            <div class="mb-3" style="padding: 12px; background-color: #f0f9ff; border-radius: 8px; border-left: 3px solid #0ea5e9;">
-                                <small style="color: #0369a1; font-weight: 600;">📅 Due: {{ t.due_date|date:"M d, Y" }}</small>
-                            </div>
-                        {% endif %}
-
-                        <!-- Reminder -->
-                        {% if t.reminder %}
-                            <div class="mb-4" style="padding: 12px; background-color: #fef3c7; border-radius: 8px; border-left: 3px solid #f59e0b;">
-                                <small style="color: #92400e; font-weight: 600;">🔔 Reminder: {{ t.reminder|date:"M d, Y H:i" }}</small>
-                            </div>
-                        {% endif %}
-
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-2 mt-4">
-                            <a href="/todos/edit/{{ t.id }}/" class="btn btn-sm" style="background-color: #3b82f6; color: white; flex: 1; border: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;">
-                                ✏️ Edit
-                            </a>
-                            <a href="/todos/delete/{{ t.id }}/" class="btn btn-sm" style="background-color: #ef4444; color: white; flex: 1; border: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;" onclick="return confirm('Are you sure?')">
-                                🗑️ Delete
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<div class="row kanban-board g-4">
+    <!-- To Do Column -->
+    <div class="col-md-4">
+        <div class="kanban-column" style="background: #f1f5f9; border-radius: 12px; height: 100%;">
+            <div class="column-header"
+                style="background: #e2e8f0; padding: 12px 16px; border-top-left-radius: 12px; border-top-right-radius: 12px; font-weight: 700; color: #475569; display: flex; justify-content: space-between;">
+                <span>⬜ To Do</span>
+                <span class="badge bg-white text-dark">{{ board.pending.count }}</span>
             </div>
-        {% endfor %}
+            <div id="pending" class="column-body p-3" style="min-height: 400px; padding-bottom: 50px;"
+                data-status="PENDING">
+                {% for todo in board.pending %}
+                {% include "todo_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
-{% else %}
-    <div style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-radius: 16px;">
-        <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
-        <h3 style="color: #1e293b; margin-bottom: 8px;">No Todos Yet</h3>
-        <p style="color: #64748b; margin-bottom: 20px;">Start by creating your first todo task</p>
-        <a href="/todos/add/" class="btn btn-success">➕ Create Your First Todo</a>
+
+    <!-- In Progress Column -->
+    <div class="col-md-4">
+        <div class="kanban-column" style="background: #eff6ff; border-radius: 12px; height: 100%;">
+            <div class="column-header"
+                style="background: #dbeafe; padding: 12px 16px; border-top-left-radius: 12px; border-top-right-radius: 12px; font-weight: 700; color: #1e40af; display: flex; justify-content: space-between;">
+                <span>🚧 In Progress</span>
+                <span class="badge bg-white text-primary">{{ board.in_progress.count }}</span>
+            </div>
+            <div id="in_progress" class="column-body p-3" style="min-height: 400px; padding-bottom: 50px;"
+                data-status="IN_PROGRESS">
+                {% for todo in board.in_progress %}
+                {% include "todo_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
-{% endif %}
+
+    <!-- Done Column -->
+    <div class="col-md-4">
+        <div class="kanban-column" style="background: #f0fdf4; border-radius: 12px; height: 100%;">
+            <div class="column-header"
+                style="background: #dcfce7; padding: 12px 16px; border-top-left-radius: 12px; border-top-right-radius: 12px; font-weight: 700; color: #166534; display: flex; justify-content: space-between;">
+                <span>✅ Done</span>
+                <span class="badge bg-white text-success">{{ board.completed.count }}</span>
+            </div>
+            <div id="completed" class="column-body p-3" style="min-height: 400px; padding-bottom: 50px;"
+                data-status="COMPLETED">
+                {% for todo in board.completed %}
+                {% include "todo_card.html" with is_completed=True %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts for Drag & Drop -->
+<script>
+    const columns = document.querySelectorAll('.column-body');
+    // const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Removed to fix crash
+
+    columns.forEach(column => {
+        new Sortable(column, {
+            group: 'kanban', // set both lists to same group
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: function (evt) {
+                const itemEl = evt.item;
+                const newStatus = evt.to.getAttribute('data-status');
+                const todoId = itemEl.getAttribute('data-id');
+
+                // If moved to same column, do nothing (unless we implement re-ordering later)
+                if (evt.from === evt.to) return;
+
+                // API Call
+                fetch(`/todos/update-status/${todoId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('Error moving task!');
+                            // Revert change (simple reload for MVP or sortable revert)
+                            window.location.reload();
+                        }
+                        else {
+                            // Optional: Visual change on checkmark if moved to Done
+                            if (newStatus === 'COMPLETED') {
+                                itemEl.style.opacity = '0.7';
+                            } else {
+                                itemEl.style.opacity = '1';
+                            }
+                        }
+                    });
+            }
+        });
+    });
+</script>
 
 <style>
-    .todo-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
+    .sortable-ghost {
+        opacity: 0.4;
+        background: #fde68a;
     }
 
-    .todo-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    .sortable-drag {
+        cursor: grabbing;
     }
 
-    .activity-oval {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        font-size: 24px;
-        border: 2px solid #d1d5db;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .badge {
-        letter-spacing: 0.5px;
+    .column-body {
+        transition: background-color 0.2s;
     }
 </style>
 

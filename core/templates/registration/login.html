@@ -1,0 +1,107 @@
+{% extends "auth_layout.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-split">
+        <!-- Form Side -->
+        <div class="auth-left">
+            <div style="font-size: 32px; margin-bottom: 20px;">👋</div>
+            <h2 style="color: #1e293b; margin-bottom: 10px;">Welcome back</h2>
+            <p style="color: #64748b; margin-bottom: 40px; line-height: 1.6;">
+                Please enter your details to sign in.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="border-radius: 10px; font-size: 14px;">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Username Field -->
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}"
+                        style="font-size: 13px; font-weight: 600; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Username</label>
+                    <div style="position: relative;">
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                    <div style="color: #ef4444; font-size: 13px; margin-top: 5px;">
+                        {{ form.username.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-4">
+                    <label for="{{ form.password.id_for_label }}"
+                        style="font-size: 13px; font-weight: 600; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Password</label>
+                    <div style="position: relative;">
+                        {{ form.password }}
+                    </div>
+                    {% if form.password.errors %}
+                    <div style="color: #ef4444; font-size: 13px; margin-top: 5px;">
+                        {{ form.password.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit"
+                    style="width: 100%; padding: 14px; background: #1e293b; color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 16px; margin-top: 20px; cursor: pointer; transition: all 0.3s ease;">
+                    Sign in
+                </button>
+            </form>
+
+            <div style="margin-top: 30px; text-align: center; color: #64748b; font-size: 14px;">
+                Don't have an account?
+                <a href="{% url 'register' %}" style="color: #3b82f6; text-decoration: none; font-weight: 600;">Sign up
+                    for free</a>
+            </div>
+        </div>
+
+        <!-- Visual Side -->
+        <div class="auth-right">
+            <div class="shape-1"></div>
+            <div class="shape-2"></div>
+
+            <div class="cta-text text-center">
+                <div style="font-size: 60px; margin-bottom: 20px;">📱</div>
+                <h2 style="font-size: 36px; margin-bottom: 24px; color: white;">Smart Notes & Todos</h2>
+                <p
+                    style="font-size: 18px; color: rgba(255,255,255,0.9); line-height: 1.6; max-width: 300px; margin: 0 auto;">
+                    Organize your life, clarify your mind, and get things done.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: #f8fafc;
+        font-size: 15px;
+        transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: #3b82f6;
+        background: white;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    button:hover {
+        background: #0f172a;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+</style>
+{% endblock %}

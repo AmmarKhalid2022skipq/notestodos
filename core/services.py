@@ -6,17 +6,18 @@ from datetime import timedelta
 from django.db.models import Count
 
 class BaseCRUDService:
-    def __init__(self, model_class, form_class):
+    def __init__(self, model_class, form_class, user):
         self.model = model_class
         self.form_class = form_class
+        self.user = user
 
     def list_all(self):
-        """Return all objects ordered by creation date descending."""
-        return self.model.objects.all().order_by("-created_at")
+        """Return all objects for the user ordered by creation date descending."""
+        return self.model.objects.filter(user=self.user).order_by("-created_at")
 
     def get_by_id(self, pk):
-        """Get object or 404."""
-        return get_object_or_404(self.model, pk=pk)
+        """Get object or 404, ensuring it belongs to the user."""
+        return get_object_or_404(self.model, pk=pk, user=self.user)
 
     def create(self, request_post_data):
         """
@@ -25,7 +26,9 @@ class BaseCRUDService:
         """
         form = self.form_class(request_post_data)
         if form.is_valid():
-            obj = form.save()
+            obj = form.save(commit=False)
+            obj.user = self.user
+            obj.save()
             return True, obj
         return False, form
 
@@ -48,12 +51,12 @@ class BaseCRUDService:
         return True
 
 class NoteService(BaseCRUDService):
-    def __init__(self):
-        super().__init__(Note, NoteForm)
+    def __init__(self, user):
+        super().__init__(Note, NoteForm, user)
 
 class TodoService(BaseCRUDService):
-    def __init__(self):
-        super().__init__(Todo, TodoForm)
+    def __init__(self, user):
+        super().__init__(Todo, TodoForm, user)
 
     # ---------------------------
     # Dashboard / Reporting Logic
@@ -63,17 +66,21 @@ class TodoService(BaseCRUDService):
         """
         Aggregate stats for the dashboard.
         """
+        # User-specific queries
+        user_notes = Note.objects.filter(user=self.user)
+        user_todos = self.model.objects.filter(user=self.user)
+
         # Global counts
-        notes_count = Note.objects.count()
-        todos_count = self.model.objects.count()
-        completed_todos = self.model.objects.filter(done=True).count()
+        notes_count = user_notes.count()
+        todos_count = user_todos.count()
+        completed_todos = user_todos.filter(done=True).count()
 
         # Search results
         notes_results = []
         todos_results = []
         if query:
-            notes_results = Note.objects.filter(title__icontains=query)
-            todos_results = self.model.objects.filter(task__icontains=query)
+            notes_results = user_notes.filter(title__icontains=query)
+            todos_results = user_todos.filter(task__icontains=query)
 
         return {
             "notes_count": notes_count,
@@ -87,8 +94,8 @@ class TodoService(BaseCRUDService):
         """
         Return upcoming, overdue, and soon reminders.
         """
-        # Get ALL reminders that have a reminder set and aren't done
-        all_reminders_qs = self.model.objects.filter(reminder__isnull=False, done=False).order_by('reminder')
+        # Get ALL reminders that have a reminder set and aren't done, for THIS user
+        all_reminders_qs = self.model.objects.filter(user=self.user, reminder__isnull=False, done=False).order_by('reminder')
         
         overdue_qs = all_reminders_qs.filter(reminder__lt=now)
         upcoming_qs = all_reminders_qs.filter(reminder__gte=now)
@@ -108,30 +115,26 @@ class TodoService(BaseCRUDService):
         """Return tasks due today."""
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         today_end = today_start + timedelta(days=1)
-        return self.model.objects.filter(due_date__gte=today_start, due_date__lt=today_end, done=False).order_by('due_date')[:10]
+        return self.model.objects.filter(user=self.user, due_date__gte=today_start, due_date__lt=today_end, done=False).order_by('due_date')[:10]
 
     def get_priority_matrix(self, now):
         """Categorize tasks into Urgent/Important quadrants."""
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         tomorrow = today_start + timedelta(days=1)
+        
+        base_qs = self.model.objects.filter(user=self.user, done=False, is_important=True)
 
         # Important AND urgent (marked important + due today/tomorrow)
-        important_urgent = self.model.objects.filter(
-            done=False,
-            is_important=True,
-            due_date__lte=tomorrow
-        ).order_by('due_date')[:5]
+        important_urgent = base_qs.filter(due_date__lte=tomorrow).order_by('due_date')[:5]
 
         # Important but NOT urgent (marked important + due later)
-        important_not_urgent = self.model.objects.filter(
-            done=False,
-            is_important=True,
+        important_not_urgent = base_qs.filter(
             due_date__gt=tomorrow,
             due_date__isnull=False
         ).order_by('due_date')[:5]
 
         # All important tasks (for dashboard display)
-        all_important = self.model.objects.filter(done=False, is_important=True).order_by('due_date')[:8]
+        all_important = base_qs.order_by('due_date')[:8]
 
         return {
             "important_urgent": important_urgent,
@@ -147,8 +150,11 @@ class TodoService(BaseCRUDService):
         """
         Data for the JSON polling endpoint.
         """
-        upcoming_qs = self.model.objects.filter(reminder__isnull=False, done=False, reminder__gte=now).order_by('reminder')
-        overdue_qs = self.model.objects.filter(reminder__isnull=False, done=False, reminder__lt=now).order_by('reminder')
+        base_qs = self.model.objects.filter(user=self.user, reminder__isnull=False, done=False).order_by('reminder')
+        
+        upcoming_qs = base_qs.filter(reminder__gte=now)
+        overdue_qs = base_qs.filter(reminder__lt=now)
+        
         soon_threshold = now + timedelta(hours=1)
         soon_qs = upcoming_qs.filter(reminder__lte=soon_threshold)
 
@@ -180,8 +186,8 @@ class TodoService(BaseCRUDService):
         """
         Group todos by month for the calendar view.
         """
-        pending_todos = self.model.objects.filter(due_date__isnull=False, done=False).order_by("due_date")
-        completed_todos = self.model.objects.filter(due_date__isnull=False, done=True).order_by("due_date")
+        pending_todos = self.model.objects.filter(user=self.user, due_date__isnull=False, done=False).order_by("due_date")
+        completed_todos = self.model.objects.filter(user=self.user, due_date__isnull=False, done=True).order_by("due_date")
 
         def group_by_month(todos):
             grouped = {}
@@ -194,3 +200,38 @@ class TodoService(BaseCRUDService):
             "grouped_pending": group_by_month(pending_todos),
             "grouped_completed": group_by_month(completed_todos),
         }
+
+    # ---------------------------
+    # Kanban Board
+    # ---------------------------
+
+    def get_kanban_board(self):
+        """
+        Group todos by status for Kanban Board.
+        """
+        todos = self.model.objects.filter(user=self.user)
+        
+        return {
+            "pending": todos.filter(status=self.model.STATUS_PENDING).order_by("-is_important", "created_at"),
+            "in_progress": todos.filter(status=self.model.STATUS_IN_PROGRESS).order_by("-is_important", "created_at"),
+            "completed": todos.filter(status=self.model.STATUS_COMPLETED).order_by("-created_at")[:20],  # Limit completed items
+        }
+
+    def update_status(self, pk, new_status):
+        """
+        Update status for Kanban drag-and-drop.
+        """
+        todo = self.get_by_id(pk)
+        
+        # Validate status
+        valid_statuses = [choice[0] for choice in self.model.STATUS_CHOICES]
+        if new_status not in valid_statuses:
+            return False, "Invalid status"
+
+        todo.status = new_status
+        
+        # Sync legacy 'done' field
+        todo.done = (new_status == self.model.STATUS_COMPLETED)
+        
+        todo.save()
+        return True, "Status updated"
