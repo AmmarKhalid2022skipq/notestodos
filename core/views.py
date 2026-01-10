@@ -58,6 +58,9 @@ def dashboard(request):
     # 2. PRIORITY MATRIX
     matrix = todo_service.get_priority_matrix(now)
 
+    # 3. MONTHLY STATS
+    monthly_stats = todo_service.get_monthly_stats(now)
+
     context = {
         "notes_count": stats["notes_count"],
         "todos_count": stats["todos_count"],
@@ -78,6 +81,8 @@ def dashboard(request):
         "important_urgent": matrix["important_urgent"],
         "important_not_urgent": matrix["important_not_urgent"],
         "all_important": matrix["all_important"],
+        
+        "monthly_stats": monthly_stats,
     }
     return render(request, "dashboard.html", context)
 
@@ -210,3 +215,24 @@ def todos_calendar(request):
     todo_service = TodoService(request.user)
     context = todo_service.get_calendar_data()
     return render(request, "todos_calendar.html", context)
+
+
+@login_required
+def todos_check_done(request, id):
+    """
+    Quickly mark a task as done (and COMPLETED) from the dashboard or list,
+    then redirect back to the previous page (dashboard).
+    """
+    if request.method == "POST":
+        todo_service = TodoService(request.user)
+        # Using update_status to ensure synchronization logic in service/model is respected
+        # although update_status returns (success, msg)
+        
+        # Simpler approach: fetch and update directly or use service update_status
+        # Service update_status requires a string status.
+        success, msg = todo_service.update_status(id, "COMPLETED")
+        
+        # Redirect back to where the user came from, or dashboard default
+        return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+        
+    return redirect('dashboard')

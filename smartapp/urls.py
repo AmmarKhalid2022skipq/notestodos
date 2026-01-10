@@ -23,6 +23,7 @@ urlpatterns = [
     path("todos/<int:id>/", views.todos_detail, name="todos_detail"),
     path("todos/edit/<int:id>/", views.todos_edit, name="todos_edit"),
     path("todos/delete/<int:id>/", views.todos_delete, name="todos_delete"),
+    path("todos/check-done/<int:id>/", views.todos_check_done, name="todos_check_done"),
     # Todos calendar
     path("todos/calendar/", views.todos_calendar, name="todos_calendar"),
     # Todos Kanban Status API

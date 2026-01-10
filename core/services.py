@@ -72,7 +72,8 @@ class TodoService(BaseCRUDService):
 
         # Global counts
         notes_count = user_notes.count()
-        todos_count = user_todos.count()
+        # Count only pending tasks (done=False) for the dashboard stat
+        todos_count = user_todos.filter(done=False).count()
         completed_todos = user_todos.filter(done=True).count()
 
         # Search results
@@ -199,6 +200,32 @@ class TodoService(BaseCRUDService):
         return {
             "grouped_pending": group_by_month(pending_todos),
             "grouped_completed": group_by_month(completed_todos),
+        }
+
+    def get_monthly_stats(self, now):
+        """
+        Return stats for the current month (pending vs completed).
+        """
+        import calendar
+        # Get range for current month
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        # simplistic end date: start of next month
+        if start_date.month == 12:
+            next_month = start_date.replace(year=start_date.year + 1, month=1)
+        else:
+            next_month = start_date.replace(month=start_date.month + 1)
+        
+        # Filter todos due in this month (or reminders in this month could be another metric, but due_date is standard)
+        month_tasks = self.model.objects.filter(
+            user=self.user, 
+            due_date__gte=start_date, 
+            due_date__lt=next_month
+        )
+        
+        return {
+            "total": month_tasks.count(),
+            "pending": month_tasks.filter(done=False).count(),
+            "completed": month_tasks.filter(done=True).count()
         }
 
     # ---------------------------

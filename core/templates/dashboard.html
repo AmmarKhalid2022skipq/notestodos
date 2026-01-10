@@ -157,9 +157,8 @@
                                     <span class="badge bg-soft-blue text-primary">{{ todo.get_activity_display }}</span>
                                 </div>
                             </div>
-                            <form method="POST" action="{% url 'todos_edit' todo.id %}">
+                            <form method="POST" action="{% url 'todos_check_done' todo.id %}">
                                 {% csrf_token %}
-                                <input type="hidden" name="done" value="on">
                                 <button class="btn-check-circle" title="Mark Done"></button>
                             </form>
                         </div>
@@ -223,13 +222,23 @@
 
         <!-- RIGHT COLUMN: ALERTS & CALENDAR -->
         <div class="col-lg-4">
-            <!-- Interactive Calendar Widget (Visual only for now) -->
+            <!-- Interactive Calendar Widget -->
             <div class="glass-panel text-center mb-4 p-4 anime-fade-in-up"
                 style="animation-delay: 0.3s; background: linear-gradient(145deg, #ffffff, #f3f4f6);">
                 <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">
                     Current Month</h6>
                 <div class="display-1 fw-bold text-dark mb-0">{{ "now"|date:"d" }}</div>
                 <div class="h4 text-primary mb-3">{{ "now"|date:"F" }}</div>
+
+                <div class="d-flex justify-content-center gap-3 mb-3">
+                    <div class="badge bg-soft-blue text-primary p-2">
+                        📅 {{ monthly_stats.pending }} Pending
+                    </div>
+                    <div class="badge bg-success-subtle text-success p-2">
+                        ✅ {{ monthly_stats.completed }} Done
+                    </div>
+                </div>
+
                 <a href="{% url 'todos_calendar' %}" class="btn btn-light w-100 rounded-pill fw-bold">Open Full
                     Calendar</a>
             </div>

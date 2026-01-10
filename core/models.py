@@ -74,6 +74,21 @@ class Todo(models.Model):
             if self.due_date < timezone.now().date():
                 raise ValidationError({'due_date': 'Due date cannot be in the past.'})
 
+    def save(self, *args, **kwargs):
+        # Sync status based on done
+        if self.done and self.status != self.STATUS_COMPLETED:
+            self.status = self.STATUS_COMPLETED
+        elif not self.done and self.status == self.STATUS_COMPLETED:
+            self.status = self.STATUS_PENDING
+            
+        # Sync done based on status (ensure consistency)
+        if self.status == self.STATUS_COMPLETED:
+            self.done = True
+        else:
+            self.done = False
+            
+        super().save(*args, **kwargs)
+
     def __str__(self):
         # show custom activity when provided
         activity_display = self.get_activity_display()
