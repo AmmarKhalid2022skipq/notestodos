@@ -7,22 +7,22 @@ A modern, secure, and featured-packed productivity application built with **Djan
 ## ✨ Key Features
 
 ### 📋 Interactive Kanban Board
-![Kanban Board](docs/images/todos_list.png)
+![Kanban Board](docs/images/list_todos.png)
 - **Drag & Drop**: Effortlessly move tasks between "To Do", "In Progress", and "Done".
 - **Real-time Updates**: Status changes are saved instantly via API.
 - **Priority Management**: Visual indicators for high-priority tasks.
 
 ### 📝 Rich Text Notes
-![Notes List](docs/images/notes_list.png)
+![Notes List](docs/images/list_note.png)
 - **Quill.js Editor**: Write beautiful notes with bold, italics, lists, and colors.
-![Add Note](docs/images/add_note.png)
+![Add Note](docs/images/add_notes.png)
 
 ### 🚀 Premium Dashboard
 ![Dashboard](docs/images/dashboard.png)
 - **Glassmorphism Design**: Modern, frosted-glass UI aesthetic.
 - **Priority Matrix**: Automatically categorizes tasks.
 - **Add Todo**: Clean, modern task creation.
-![Add Todo](docs/images/add_todo.png)
+![Add Todo](docs/images/add_todos.png)
 - **Priority Matrix (Eisenhower Box)**: Automatically categorizes tasks into "Urgent & Important" vs "Schedule".
 - **Dynamic Greetings**: Welcomes you based on the time of day.
 - **Focus Mode**: Highlights tasks due today.
