@@ -2,22 +2,27 @@
 
 A modern, secure, and featured-packed productivity application built with **Django**. Manage your tasks with a Kanban board, take rich-text notes, and stay organized with a premium dashboard.
 
-![Dashboard Preview](https://via.placeholder.com/1200x600?text=Premium+Dashboard+UI)
+![Dashboard Preview](docs/images/dashboard.png)
 
 ## ✨ Key Features
 
 ### 📋 Interactive Kanban Board
+![Kanban Board](docs/images/todos_list.png)
 - **Drag & Drop**: Effortlessly move tasks between "To Do", "In Progress", and "Done".
 - **Real-time Updates**: Status changes are saved instantly via API.
 - **Priority Management**: Visual indicators for high-priority tasks.
 
 ### 📝 Rich Text Notes
+![Notes List](docs/images/notes_list.png)
 - **Quill.js Editor**: Write beautiful notes with bold, italics, lists, and colors.
-- **HTML Sanitization**: Secure rendering of rich content.
-- **Searchable**: Instantly find notes from the dashboard.
+![Add Note](docs/images/add_note.png)
 
 ### 🚀 Premium Dashboard
+![Dashboard](docs/images/dashboard.png)
 - **Glassmorphism Design**: Modern, frosted-glass UI aesthetic.
+- **Priority Matrix**: Automatically categorizes tasks.
+- **Add Todo**: Clean, modern task creation.
+![Add Todo](docs/images/add_todo.png)
 - **Priority Matrix (Eisenhower Box)**: Automatically categorizes tasks into "Urgent & Important" vs "Schedule".
 - **Dynamic Greetings**: Welcomes you based on the time of day.
 - **Focus Mode**: Highlights tasks due today.
