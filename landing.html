@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartApp | Master Your Productivity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#050511',
+                            blue: '#4f46e5', // indigo-600
+                            cyan: '#06b6d4',
+                            purple: '#8b5cf6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050511;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #4f46e5, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050511;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-brand-blue selection:text-white">
+
+    <!-- 3D Canvas Background -->
+    <div id="canvas-container" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-none"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="zap" class="w-8 h-8 text-brand-blue"></i>
+                    <span class="font-display font-bold text-2xl tracking-tight">Smart<span
+                            class="text-gradient">App</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home"
+                            class="hover:text-brand-blue transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#features"
+                            class="hover:text-brand-blue transition-colors px-3 py-2 rounded-md text-sm font-medium">Features</a>
+                        <a href="#dashboard"
+                            class="hover:text-brand-blue transition-colors px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="http://127.0.0.1:8000/login/" target="_blank"
+                            class="hover:text-brand-blue transition-colors px-3 py-2 rounded-md text-sm font-medium">Log
+                            In</a>
+                        <a href="http://127.0.0.1:8000/register/" target="_blank"
+                            class="bg-gradient-to-r from-brand-blue to-brand-purple hover:shadow-[0_0_15px_rgba(79,70,229,0.5)] transition-all px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
+                            Sign Up <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content wrapper (relative for z-index above canvas) -->
+    <main class="relative z-10 pt-20">
+
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+            <div class="text-center max-w-5xl mx-auto">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm text-brand-blue mb-8 animate-fade-in-up">
+                    <span class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-blue opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-blue"></span>
+                    </span>
+                    The Ultimate Productivity Suite
+                </div>
+                <h1 class="text-5xl md:text-7xl font-display font-bold mb-6 leading-tight">
+                    Master your day with <br /><span class="text-gradient">Intelligent Focus</span>.
+                </h1>
+                <p class="mt-4 text-xl text-gray-400 max-w-3xl mx-auto font-light mb-10 leading-relaxed">
+                    Stop letting tasks fall through the cracks. SmartApp combines a powerful Kanban board, rich-text
+                    notes, and a priority matrix into one beautiful, distraction-free dashboard.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="http://127.0.0.1:8000/register/" target="_blank"
+                        class="px-8 py-4 rounded-full bg-gradient-to-r from-brand-blue to-brand-purple text-white font-semibold text-lg hover:shadow-[0_0_30px_rgba(79,70,229,0.4)] transition-all duration-300 flex items-center justify-center gap-2">
+                        Get Started Free <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="http://127.0.0.1:8000/login/" target="_blank"
+                        class="px-8 py-4 rounded-full glass-panel text-white font-semibold text-lg hover:bg-white/10 transition-all duration-300 flex items-center justify-center">
+                        Log In
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats / Environment cloud -->
+        <section class="border-y border-white/5 bg-black/40 backdrop-blur-md py-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500 font-semibold tracking-widest uppercase mb-8">Everything you
+                    need to stay organized</p>
+                <div class="flex flex-wrap justify-center gap-12 opacity-80">
+                    <div class="flex items-center gap-2 text-xl font-bold font-display"><i data-lucide="layout"
+                            class="w-6 h-6 text-brand-blue"></i> Kanban Boards</div>
+                    <div class="flex items-center gap-2 text-xl font-bold font-display"><i data-lucide="pen-tool"
+                            class="w-6 h-6 text-brand-cyan"></i> Rich Text Notes</div>
+                    <div class="flex items-center gap-2 text-xl font-bold font-display"><i data-lucide="target"
+                            class="w-6 h-6 text-brand-purple"></i> Priority Matrix</div>
+                    <div class="flex items-center gap-2 text-xl font-bold font-display"><i data-lucide="bell"
+                            class="w-6 h-6 text-yellow-400"></i> Smart Reminders</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-32 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-20">
+                    <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Core <span
+                            class="text-gradient">Features</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto text-lg">Designed for clarity. Built for speed. SmartApp
+                        replaces cluttered to-do lists with structured, visual workflows.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div
+                        class="glass-panel p-8 rounded-3xl hover:bg-white/5 transition-all duration-300 group cursor-default">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-brand-cyan/20 flex items-center justify-center text-brand-cyan mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="trello" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 font-display">Interactive Kanban</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Visualize your workflow. Drag and drop tasks effortlessly between "To Do", "In Progress",
+                            and "Done". Keep track of priority flags and exact due dates.
+                        </p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div
+                        class="glass-panel p-8 rounded-3xl hover:bg-white/5 transition-all duration-300 group cursor-default">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-brand-purple/20 flex items-center justify-center text-brand-purple mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="edit-3" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 font-display">Rich-Text Notes</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Capture your thoughts beautifully with our integrated Quill.js editor. Format text with
+                            bolding, italics, lists, and colors, ready whenever inspiration strikes.
+                        </p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div
+                        class="glass-panel p-8 rounded-3xl hover:bg-white/5 transition-all duration-300 group cursor-default">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-brand-blue/20 flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="clock" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 font-display">Priority Matrix</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Focus on what actually matters. Our Eisenhower Box automatically separates tasks that are
+                            "Urgent & Important" from those you just need to "Schedule" for later.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Preview Section -->
+        <section id="dashboard"
+            class="py-32 bg-gradient-to-b from-transparent to-brand-blue/5 relative overflow-hidden">
+            <!-- Decorative blur -->
+            <div
+                class="absolute top-1/2 left-0 w-96 h-96 bg-brand-purple/20 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none">
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="flex flex-col lg:flex-row items-center gap-16">
+                    <div class="lg:w-1/2">
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-cyan/20 text-brand-cyan text-xs font-bold uppercase tracking-wider mb-6">
+                            Premium UI Design
+                        </div>
+                        <h2 class="text-4xl md:text-5xl font-display font-bold mb-6">A workspace you'll <br /><span
+                                class="text-gradient">actually want to use</span>.</h2>
+                        <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                            We threw away the boring spreadsheet look and crafted a 'Mind-Blowing' glassmorphism
+                            interface. Your dashboard now greets you dynamically, highlights today's focus, and provides
+                            instant access to everything securely.
+                        </p>
+
+                        <ul class="space-y-4 mb-10">
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-blue flex-shrink-0"></i>
+                                <span class="text-gray-300">Clean, Frosted-Glass aesthetics with fluid
+                                    animations.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-blue flex-shrink-0"></i>
+                                <span class="text-gray-300">"Today's Focus" section highlights tasks due right
+                                    now.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-blue flex-shrink-0"></i>
+                                <span class="text-gray-300">Secure user isolation ensures your notes stay 100%
+                                    private.</span>
+                            </li>
+                        </ul>
+                        <a href="http://127.0.0.1:8000/login/" target="_blank"
+                            class="text-brand-cyan font-bold hover:underline flex items-center gap-2">
+                            Log in to your dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+
+                    <!-- Dashboard Image Placeholder -->
+                    <div class="lg:w-1/2 w-full">
+                        <div class="glass-panel rounded-3xl p-3 relative shadow-[0_0_50px_rgba(79,70,229,0.2)]">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-tr from-brand-blue/20 to-brand-purple/20 rounded-3xl blur-xl -z-10">
+                            </div>
+
+                            <!-- Browser mocked window -->
+                            <div class="bg-gray-900 rounded-2xl overflow-hidden border border-white/10">
+                                <div class="bg-black/50 px-4 py-3 border-b border-white/10 flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                    <div
+                                        class="mx-auto bg-white/5 rounded-full px-4 text-xs font-mono text-gray-500 py-1 flex items-center gap-2">
+                                        <i data-lucide="lock" class="w-3 h-3"></i> smartapp.local/dashboard/
+                                    </div>
+                                </div>
+                                <img src="docs/images/dashboard.png" alt="SmartApp Dashboard Preview"
+                                    class="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA / Sign Up Section -->
+        <section id="contact" class="py-32">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-panel rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-brand-purple/30 rounded-full blur-[100px] pointer-events-none">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 w-64 h-64 bg-brand-cyan/30 rounded-full blur-[100px] pointer-events-none">
+                    </div>
+
+                    <h2 class="text-3xl md:text-5xl font-display font-bold mb-6 relative z-10">Ready to transform your
+                        <span class="text-gradient">workflow?</span>
+                    </h2>
+                    <p class="text-gray-400 mb-10 max-w-2xl mx-auto relative z-10">
+                        Join SmartApp today. Create your secure account in seconds and unlock your personalized
+                        productivity dashboard.
+                    </p>
+
+                    <div class="max-w-md mx-auto relative z-10 space-y-4">
+                        <a href="http://127.0.0.1:8000/register/" target="_blank"
+                            class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-blue to-brand-purple text-white font-bold text-lg hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all flex justify-center items-center gap-2">
+                            Sign Up for Web App <i data-lucide="rocket" class="w-5 h-5"></i>
+                        </a>
+                        <p class="text-sm text-gray-500 mt-4">Already have an account? <a
+                                href="http://127.0.0.1:8000/login/" target="_blank"
+                                class="text-brand-cyan hover:underline">Log in here</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t border-white/10 bg-black/50 backdrop-blur-lg pt-16 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                    <div class="md:col-span-2">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i data-lucide="zap" class="w-6 h-6 text-brand-blue"></i>
+                            <span class="font-display font-bold text-xl tracking-tight">Smart<span
+                                    class="text-gradient">App</span></span>
+                        </div>
+                        <p class="text-gray-500 text-sm max-w-sm">
+                            A modern, secure, and feature-packed productivity application built with Django, crafted for
+                            high-performance individuals.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white mb-4">Product</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#features" class="hover:text-brand-blue transition-colors">Kanban Board</a>
+                            </li>
+                            <li><a href="#features" class="hover:text-brand-blue transition-colors">Rich Text Notes</a>
+                            </li>
+                            <li><a href="#dashboard" class="hover:text-brand-blue transition-colors">Priority
+                                    Dashboard</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white mb-4">Resources</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="https://github.com/" target="_blank"
+                                    class="hover:text-brand-blue transition-colors">GitHub Repository</a></li>
+                            <li><a href="http://127.0.0.1:8000/" target="_blank"
+                                    class="hover:text-brand-blue transition-colors">Web App</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div
+                    class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600">
+                    <p>&copy; 2026 SmartApp. Open-source built with Django.</p>
+                    <div class="flex gap-4">
+                        <a href="https://github.com/" target="_blank" class="hover:text-white transition-colors">Source
+                            Code</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Icons Initialization -->
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <!-- Three.js 3D Background Logic -->
+    <script>
+        // Set up Scene, Camera, Renderer
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        // Add subtle fog to blend points into background
+        scene.fog = new THREE.FogExp2(0x050511, 0.001);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.z = 150;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0); // Transparent background
+        container.appendChild(renderer.domElement);
+
+        // Core visual group
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // 1. Central Core (Representing Focus Brain)
+        const coreGeometry = new THREE.IcosahedronGeometry(25, 2);
+        const coreMaterial = new THREE.MeshBasicMaterial({
+            color: 0x4f46e5,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.15
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        group.add(core);
+
+        // 2. Data Nodes / Particles (Representing Notes & Todos)
+        const particleCount = 800;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+
+        const color1 = new THREE.Color(0x06b6d4); // Cyan
+        const color2 = new THREE.Color(0x8b5cf6); // Purple
+        const color3 = new THREE.Color(0x4f46e5); // Blue
+
+        for (let i = 0; i < particleCount; i++) {
+            // Distribute points in a wide sphere
+            const r = 40 + Math.random() * 200;
+            const theta = 2 * Math.PI * Math.random();
+            const phi = Math.acos(2 * Math.random() - 1);
+
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
+
+            positions[i * 3] = x;
+            positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z;
+
+            // Randomize colors between cyan, purple, blue
+            const mixedColor = new THREE.Color();
+            const rand = Math.random();
+            if (rand < 0.33) mixedColor.copy(color1);
+            else if (rand < 0.66) mixedColor.copy(color2);
+            else mixedColor.copy(color3);
+
+            colors[i * 3] = mixedColor.r;
+            colors[i * 3 + 1] = mixedColor.g;
+            colors[i * 3 + 2] = mixedColor.b;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        // Create circle texture for particles
+        const canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        const context = canvas.getContext('2d');
+        context.beginPath();
+        context.arc(8, 8, 8, 0, Math.PI * 2);
+        context.fillStyle = 'white';
+        context.fill();
+        const texture = new THREE.CanvasTexture(canvas);
+
+        const material = new THREE.PointsMaterial({
+            size: 2,
+            vertexColors: true,
+            map: texture,
+            transparent: true,
+            opacity: 0.8,
+            alphaTest: 0.1,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        group.add(particles);
+
+        // Lines connecting close particles (Creating the "Network" feel)
+        const lineMaterial = new THREE.LineBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.1,
+            blending: THREE.AdditiveBlending
+        });
+
+        // We will create static lines between close nodes to save performance
+        const lineGeometry = new THREE.BufferGeometry();
+        const linePositions = [];
+        const lineColors = [];
+
+        for (let i = 0; i < particleCount; i++) {
+            for (let j = i + 1; j < particleCount; j++) {
+                const dist = Math.sqrt(
+                    Math.pow(positions[i * 3] - positions[j * 3], 2) +
+                    Math.pow(positions[i * 3 + 1] - positions[j * 3 + 1], 2) +
+                    Math.pow(positions[i * 3 + 2] - positions[j * 3 + 2], 2)
+                );
+
+                // Connect if close enough
+                if (dist < 25) {
+                    linePositions.push(
+                        positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
+                        positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
+                    );
+                    lineColors.push(
+                        colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2],
+                        colors[j * 3], colors[j * 3 + 1], colors[j * 3 + 2]
+                    );
+                }
+            }
+        }
+
+        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        group.add(lines);
+
+        // Mouse interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Scroll interaction (Move camera slightly on scroll)
+        let scrollY = 0;
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = clock.getElapsedTime();
+
+            // Rotate entire group
+            group.rotation.y += 0.001;
+            group.rotation.x += 0.0005;
+
+            // Pulse the central core
+            core.scale.setScalar(1 + Math.sin(time * 2) * 0.05);
+            core.rotation.y -= 0.002;
+
+            // Ease camera towards mouse target
+            targetX = mouseX * 0.05;
+            targetY = mouseY * 0.05;
+
+            camera.position.x += (targetX - camera.position.x) * 0.02;
+            camera.position.y += (-targetY - camera.position.y) * 0.02;
+
+            // Move camera forward/backward based on scroll
+            camera.position.z = 150 - (scrollY * 0.05);
+
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation
+        animate();
+
+        // UI Script: Navbar background opacity on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-black/80', 'border-b', 'border-white/10');
+            } else {
+                navbar.classList.remove('bg-black/80', 'border-b', 'border-white/10');
+            }
+        });
+    </script>
+</body>
+
+</html>

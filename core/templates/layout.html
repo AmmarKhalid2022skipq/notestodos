@@ -8,6 +8,8 @@
 
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <!-- Google Fonts -->
     <link
@@ -30,17 +32,33 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-color: #050511;
+            color: #ffffff;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 3D Canvas */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
         .sidebar {
             height: 100vh;
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
             padding-top: 30px;
             position: sticky;
             top: 0;
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
         .sidebar h3 {
@@ -51,7 +69,7 @@
         }
 
         .sidebar hr {
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.1);
             margin: 15px 0;
         }
 
@@ -82,18 +100,26 @@
 
         .content {
             padding: 40px;
+            position: relative;
+            z-index: 1;
         }
 
         .card {
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            background: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: rgba(255, 255, 255, 0.1);
+            /* iOS Style lighter frost */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: #ffffff;
         }
 
         .card:hover {
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         /* Form Styling */
@@ -103,7 +129,7 @@
 
         label {
             font-weight: 600;
-            color: #1e293b;
+            color: #cbd5e1;
             margin-bottom: 10px;
             font-size: 14px;
             text-transform: uppercase;
@@ -114,25 +140,31 @@
         input[type="date"],
         input[type="datetime-local"],
         select,
-        textarea {
-            border: 2px solid #e2e8f0;
+        textarea,
+        .form-control {
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             padding: 12px 16px;
             font-size: 14px;
             transition: all 0.3s ease;
-            background-color: #f8fafc;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            color: white !important;
+            backdrop-filter: blur(8px);
         }
 
-        input[type="text"]:focus,
-        input[type="date"]:focus,
-        input[type="datetime-local"]:focus,
+        input:focus,
         select:focus,
-        textarea:focus {
-            border-color: #3b82f6;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        textarea:focus,
+        .form-control:focus {
+            border-color: #60a5fa;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
             outline: none;
+            color: white !important;
         }
+
+        /* Override summernote/quill text color to dark inside editor if needed, 
+           but for now default to white */
 
         input[type="checkbox"] {
             width: 20px;
@@ -146,20 +178,21 @@
             display: flex;
             align-items: center;
             padding: 16px;
-            background-color: #f0fdf4;
+            background-color: rgba(16, 185, 129, 0.1);
             border-radius: 10px;
-            border: 2px solid #d1fae5;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .form-check label {
             margin-bottom: 0;
             cursor: pointer;
             font-weight: 500;
+            color: #d1fae5;
         }
 
         .form-text {
             font-size: 13px;
-            color: #64748b;
+            color: #94a3b8;
             margin-top: 8px;
             font-weight: 400;
         }
@@ -175,16 +208,13 @@
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: white;
         }
 
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        }
-
-        .btn-success:active {
-            transform: translateY(0);
         }
 
         /* Activity Emoji Badge */
@@ -195,9 +225,9 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: rgba(255, 255, 255, 0.1);
             font-size: 28px;
-            border: 2px solid #d1d5db;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             margin: 0 8px;
         }
@@ -207,17 +237,40 @@
             border-color: #3b82f6;
         }
 
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #ffffff;
+        }
+
         h2 {
-            color: #1e293b;
             margin-bottom: 30px;
             font-size: 28px;
         }
 
+        .text-muted {
+            color: #94a3b8 !important;
+        }
+
         .error-message {
-            color: #dc2626;
+            color: #ef4444;
             font-size: 12px;
             margin-top: 6px;
             font-weight: 500;
+        }
+
+        /* Fade-in animation class for scrolling content */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         @media (max-width: 768px) {
@@ -240,6 +293,7 @@
 </head>
 
 <body>
+    <div id="canvas-container"></div>
 
     <div class="container-fluid">
         <div class="row">
@@ -284,6 +338,201 @@
     <!-- Include Bootstrap JS bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Three.js Background & Scroll Animations -->
+    <script>
+        // Setup Three.js Scene
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050511, 0.001);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.z = 150;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0); // Transparent to show body bg
+        container.appendChild(renderer.domElement);
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // Core visual group
+        const coreGeometry = new THREE.IcosahedronGeometry(25, 2);
+        const coreMaterial = new THREE.MeshBasicMaterial({
+            color: 0x4f46e5,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.15
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        group.add(core);
+
+        // Particles
+        const particleCount = 800;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+
+        const color1 = new THREE.Color(0x06b6d4); // Cyan
+        const color2 = new THREE.Color(0x8b5cf6); // Purple
+        const color3 = new THREE.Color(0x4f46e5); // Blue
+
+        for (let i = 0; i < particleCount; i++) {
+            const r = 40 + Math.random() * 200;
+            const theta = 2 * Math.PI * Math.random();
+            const phi = Math.acos(2 * Math.random() - 1);
+
+            positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+            positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+            positions[i * 3 + 2] = r * Math.cos(phi);
+
+            const mixedColor = new THREE.Color();
+            const rand = Math.random();
+            if (rand < 0.33) mixedColor.copy(color1);
+            else if (rand < 0.66) mixedColor.copy(color2);
+            else mixedColor.copy(color3);
+
+            colors[i * 3] = mixedColor.r;
+            colors[i * 3 + 1] = mixedColor.g;
+            colors[i * 3 + 2] = mixedColor.b;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        const context = canvas.getContext('2d');
+        context.beginPath();
+        context.arc(8, 8, 8, 0, Math.PI * 2);
+        context.fillStyle = 'white';
+        context.fill();
+        const texture = new THREE.CanvasTexture(canvas);
+
+        const material = new THREE.PointsMaterial({
+            size: 2,
+            vertexColors: true,
+            map: texture,
+            transparent: true,
+            opacity: 0.8,
+            alphaTest: 0.1,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        group.add(particles);
+
+        // Network Lines
+        const lineMaterial = new THREE.LineBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.1,
+            blending: THREE.AdditiveBlending
+        });
+
+        const lineGeometry = new THREE.BufferGeometry();
+        const linePositions = [];
+        const lineColors = [];
+
+        for (let i = 0; i < particleCount; i++) {
+            for (let j = i + 1; j < particleCount; j++) {
+                const dist = Math.sqrt(
+                    Math.pow(positions[i * 3] - positions[j * 3], 2) +
+                    Math.pow(positions[i * 3 + 1] - positions[j * 3 + 1], 2) +
+                    Math.pow(positions[i * 3 + 2] - positions[j * 3 + 2], 2)
+                );
+
+                if (dist < 25) {
+                    linePositions.push(
+                        positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
+                        positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
+                    );
+                    lineColors.push(
+                        colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2],
+                        colors[j * 3], colors[j * 3 + 1], colors[j * 3 + 2]
+                    );
+                }
+            }
+        }
+
+        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        group.add(lines);
+
+        // Dynamic interactions
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        let scrollY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - window.innerWidth / 2);
+            mouseY = (event.clientY - window.innerHeight / 2);
+        });
+
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            group.rotation.y += 0.001;
+            group.rotation.x += 0.0005;
+
+            core.scale.setScalar(1 + Math.sin(time * 2) * 0.05);
+            core.rotation.y -= 0.002;
+
+            targetX = mouseX * 0.05;
+            targetY = mouseY * 0.05;
+
+            camera.position.x += (targetX - camera.position.x) * 0.02;
+            camera.position.y += (-targetY - camera.position.y) * 0.02;
+            camera.position.z = 150 - (scrollY * 0.05);
+
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+
+        // Scroll Reveal logic
+        document.addEventListener("DOMContentLoaded", function () {
+            // Apply reveal classes recursively to structural elements
+            const targets = document.querySelectorAll('.card, .glass-panel, table, .form-group, .focus-item, .matrix-card, .notification-item');
+            targets.forEach((el, index) => {
+                el.classList.add('scroll-reveal');
+                // Stagger transition slightly
+                el.style.transitionDelay = `${(index % 5) * 0.1}s`;
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.scroll-reveal').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
 </body>
 
 </html>

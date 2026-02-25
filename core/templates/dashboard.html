@@ -78,9 +78,9 @@
                         <div class="d-flex flex-column gap-3">
                             {% for note in notes_results %}
                             <a href="{% url 'notes_edit' note.id %}"
-                                class="d-block text-decoration-none text-dark p-3 rounded hover-lift"
-                                style="background: rgba(241, 245, 249, 0.5);">
-                                <div class="fw-bold">{{ note.title }}</div>
+                                class="d-block text-decoration-none text-white p-3 rounded hover-lift"
+                                style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.2);">
+                                <div class="fw-bold text-white">{{ note.title }}</div>
                                 <div class="small text-muted mt-1">{{ note.content|striptags|truncatechars:100 }}</div>
                             </a>
                             {% endfor %}
@@ -98,10 +98,10 @@
                         <div class="d-flex flex-column gap-3">
                             {% for todo in todos_results %}
                             <a href="{% url 'todos_edit' todo.id %}"
-                                class="d-block text-decoration-none text-dark p-3 rounded hover-lift"
-                                style="background: rgba(241, 245, 249, 0.5);">
+                                class="d-block text-decoration-none text-white p-3 rounded hover-lift"
+                                style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.2);">
                                 <div class="d-flex justify-content-between">
-                                    <div class="fw-bold">{{ todo.task }}</div>
+                                    <div class="fw-bold text-white">{{ todo.task }}</div>
                                     {% if todo.done %}
                                     <span class="badge bg-success-subtle text-success">Done</span>
                                     {% else %}
@@ -224,10 +224,10 @@
         <div class="col-lg-4">
             <!-- Interactive Calendar Widget -->
             <div class="glass-panel text-center mb-4 p-4 anime-fade-in-up"
-                style="animation-delay: 0.3s; background: linear-gradient(145deg, #ffffff, #f3f4f6);">
+                style="animation-delay: 0.3s; background: rgba(255,255,255,0.1);">
                 <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">
                     Current Month</h6>
-                <div class="display-1 fw-bold text-dark mb-0">{{ "now"|date:"d" }}</div>
+                <div class="display-1 fw-bold text-white mb-0">{{ "now"|date:"d" }}</div>
                 <div class="h4 text-primary mb-3">{{ "now"|date:"F" }}</div>
 
                 <div class="d-flex justify-content-center gap-3 mb-3">
@@ -245,8 +245,8 @@
 
             <!-- Notifications / Reminders -->
             <div class="glass-panel p-0 mb-4 anime-fade-in-up" style="animation-delay: 0.4s; overflow: hidden;">
-                <div class="p-3 border-bottom bg-light bg-opacity-50">
-                    <h6 class="m-0 fw-bold">🔔 Notifications</h6>
+                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50">
+                    <h6 class="m-0 fw-bold text-white">🔔 Notifications</h6>
                 </div>
                 <div class="p-3">
                     {% if overdue_reminders %}
@@ -266,7 +266,7 @@
                     <div class="notification-item upcoming mb-3">
                         <div class="icon">⏰</div>
                         <div>
-                            <div class="fw-bold text-dark">{{ r.task }}</div>
+                            <div class="fw-bold text-white">{{ r.task }}</div>
                             <small class="text-muted">in {{ r.reminder|timeuntil }}</small>
                         </div>
                     </div>
@@ -297,22 +297,17 @@
     /* PREMIUM CSS RESET & UTILS */
     :root {
         --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        --glass-bg: rgba(255, 255, 255, 0.7);
-        --glass-border: 1px solid rgba(255, 255, 255, 0.5);
-        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: 1px solid rgba(255, 255, 255, 0.05);
+        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }
 
-    body {
-        background-color: #f3f4f6;
-        background-image:
-            radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
-        background-attachment: fixed;
-    }
+
 
     .text-gradient {
-        background: -webkit-linear-gradient(45deg, #1e293b, #4f46e5);
+        background: -webkit-linear-gradient(45deg, #cbd5e1, #4f46e5);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
@@ -327,20 +322,19 @@
         background-color: #e0e7ff;
     }
 
-    /* SEARCH & BUTTONS */
     .search-bar-container {
-        background: white;
+        background: rgba(0, 0, 0, 0.3);
         padding: 8px 16px;
         border-radius: 50px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         display: flex;
         align-items: center;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
     }
 
     .search-bar-container:focus-within {
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
         border-color: #6366f1;
     }
 
@@ -349,6 +343,8 @@
         outline: none;
         font-size: 14px;
         width: 200px;
+        background: transparent;
+        color: white;
     }
 
     .search-bar-container button {
@@ -369,11 +365,11 @@
 
     /* GLASS CARDS */
     .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: var(--glass-border);
-        box-shadow: var(--glass-shadow);
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         border-radius: 20px;
         padding: 24px;
         position: relative;
@@ -390,7 +386,7 @@
         font-size: 2.5rem;
         font-weight: 800;
         margin: 0;
-        color: #1e293b;
+        color: white;
     }
 
     .stat-content p {
@@ -431,11 +427,14 @@
 
     /* GLASS PANELS */
     .glass-panel {
-        background: white;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-radius: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.03);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        color: white;
     }
 
     /* FOCUS LIST */
@@ -466,7 +465,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        border: 2px solid #e2e8f0;
+        border: 2px solid rgba(255, 255, 255, 0.2);
         background: transparent;
         cursor: pointer;
         transition: all 0.2s;
@@ -492,18 +491,19 @@
     .matrix-item {
         display: block;
         padding: 8px 12px;
-        background: rgba(0, 0, 0, 0.02);
+        background: rgba(255, 255, 255, 0.15);
         border-radius: 6px;
-        color: #334155;
+        color: #ffffff;
         text-decoration: none;
         margin-bottom: 6px;
         font-size: 0.9rem;
         transition: 0.2s;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .matrix-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: #0f172a;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
         padding-left: 16px;
     }
 
@@ -517,11 +517,13 @@
     }
 
     .notification-item.overdue {
-        background: #fef2f2;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
     }
 
     .notification-item.upcoming {
-        background: #f0f9ff;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
     }
 
     .notification-item .icon {
