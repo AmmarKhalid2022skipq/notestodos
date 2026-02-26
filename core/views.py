@@ -7,6 +7,16 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .services import NoteService, TodoService
 
 # ---------------------------
+# Landing Page
+# ---------------------------
+
+def landing(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    return render(request, "landing.html")
+
+
+# ---------------------------
 # Auth Views
 # ---------------------------
 

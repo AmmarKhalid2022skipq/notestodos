@@ -3,7 +3,8 @@ from django.urls import path
 from core import views
 
 urlpatterns = [
-    path("", views.dashboard, name="dashboard"),
+    path("", views.landing, name="landing"),
+    path("dashboard/", views.dashboard, name="dashboard"),
     
     # Auth
     path("register/", views.register, name="register"),
