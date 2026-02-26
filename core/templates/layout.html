@@ -8,8 +8,6 @@
 
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Three.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <!-- Google Fonts -->
     <link
@@ -29,32 +27,29 @@
         h6 {
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
+            color: #111827;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
         }
 
         body {
-            background-color: #050511;
-            color: #ffffff;
+            background-color: #f3f4f6;
+            /* Light gray background */
+            color: #1f2937;
+            /* Dark gray text */
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* 3D Canvas */
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
+        /* Sidebar Styling */
         .sidebar {
             height: 100vh;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            background: #ffffff;
+            /* Solid white */
+            border-right: 1px solid #e5e7eb;
             padding-top: 30px;
             position: sticky;
             top: 0;
@@ -62,63 +57,63 @@
         }
 
         .sidebar h3 {
-            color: white;
+            color: #111827;
             font-size: 24px;
             margin-bottom: 5px;
             letter-spacing: 0.5px;
         }
 
         .sidebar hr {
-            border-color: rgba(255, 255, 255, 0.1);
+            border-color: #e5e7eb;
             margin: 15px 0;
         }
 
         .sidebar a {
-            color: rgba(255, 255, 255, 0.7);
+            color: #4b5563;
+            /* Gray-600 */
             font-size: 16px;
             display: block;
             padding: 14px 20px;
             text-decoration: none;
             margin: 8px 10px;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border-left: 3px solid transparent;
+            font-weight: 500;
         }
 
         .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-left-color: #3b82f6;
-            transform: translateX(5px);
+            background-color: #f3f4f6;
+            color: #1e40af;
+            /* Royal Blue */
+            border-left-color: #1e40af;
+            transform: translateX(3px);
         }
 
         .sidebar a.active {
-            background-color: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border-left-color: #60a5fa;
+            background-color: #eff6ff;
+            color: #1e40af;
+            border-left-color: #1e40af;
+            font-weight: 600;
         }
 
         .content {
             padding: 40px;
-            position: relative;
-            z-index: 1;
         }
 
+        /* Card Styling */
         .card {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            background: rgba(255, 255, 255, 0.1);
-            /* iOS Style lighter frost */
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            background: #ffffff;
+            /* Solid white */
+            color: #1f2937;
         }
 
         .card:hover {
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transform: translateY(-2px);
         }
 
@@ -129,9 +124,9 @@
 
         label {
             font-weight: 600;
-            color: #cbd5e1;
-            margin-bottom: 10px;
-            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 8px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -142,29 +137,23 @@
         select,
         textarea,
         .form-control {
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
             padding: 12px 16px;
             font-size: 14px;
-            transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            color: white !important;
-            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
         }
 
         input:focus,
         select:focus,
         textarea:focus,
         .form-control:focus {
-            border-color: #60a5fa;
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
             outline: none;
-            color: white !important;
         }
-
-        /* Override summernote/quill text color to dark inside editor if needed, 
-           but for now default to white */
 
         input[type="checkbox"] {
             width: 20px;
@@ -178,43 +167,54 @@
             display: flex;
             align-items: center;
             padding: 16px;
-            background-color: rgba(16, 185, 129, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
 
         .form-check label {
             margin-bottom: 0;
             cursor: pointer;
             font-weight: 500;
-            color: #d1fae5;
+            color: #334155;
+            text-transform: none;
         }
 
         .form-text {
             font-size: 13px;
-            color: #94a3b8;
-            margin-top: 8px;
-            font-weight: 400;
+            color: #64748b;
+            margin-top: 6px;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: #fbbf24;
+            /* Yellow */
             border: none;
-            padding: 14px 48px;
+            padding: 12px 32px;
             font-weight: 600;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: white;
+            color: #1e40af;
+            /* Royal Blue */
+            box-shadow: 0 4px 6px -1px rgba(251, 191, 36, 0.3);
         }
 
         .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-1px);
+            background: #f59e0b;
+            /* Darker yellow */
+            color: #1e40af;
+            box-shadow: 0 6px 8px -1px rgba(251, 191, 36, 0.4);
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
         }
 
         /* Activity Emoji Badge */
@@ -222,41 +222,28 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            font-size: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            margin: 0 8px;
+            background: #f1f5f9;
+            font-size: 24px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
         }
 
         .activity-badge:hover {
             transform: scale(1.1);
             border-color: #3b82f6;
-        }
-
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            color: #ffffff;
-        }
-
-        h2 {
-            margin-bottom: 30px;
-            font-size: 28px;
+            background: #eff6ff;
         }
 
         .text-muted {
-            color: #94a3b8 !important;
+            color: #64748b !important;
         }
 
         .error-message {
             color: #ef4444;
-            font-size: 12px;
+            font-size: 13px;
             margin-top: 6px;
             font-weight: 500;
         }
@@ -264,8 +251,8 @@
         /* Fade-in animation class for scrolling content */
         .scroll-reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
         }
 
         .scroll-reveal.visible {
@@ -277,6 +264,8 @@
             .sidebar {
                 height: auto;
                 padding-top: 15px;
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
             }
 
             .content {
@@ -293,36 +282,38 @@
 </head>
 
 <body>
-    <div id="canvas-container"></div>
-
     <div class="container-fluid">
         <div class="row">
 
             <!-- Sidebar -->
             <div class="col-3 sidebar">
-                <h3>📱 Notes & todos</h3>
+                <h3>📱 SmartApp</h3>
                 <hr>
-                <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
-                <a href="{% url 'notes_list' %}">📝 Notes</a>
-                <a href="{% url 'todos_list' %}">✅ Todos</a>
+                <a href="{% url 'dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+                <a href="{% url 'notes_list' %}"
+                    class="{% if 'notes' in request.resolver_match.url_name %}active{% endif %}">📝 Notes</a>
+                <a href="{% url 'todos_list' %}"
+                    class="{% if 'todos' in request.resolver_match.url_name %}active{% endif %}">✅ Todos</a>
 
                 <hr>
 
                 {% if user.is_authenticated %}
                 <div
-                    style="padding: 10px 20px; color: rgba(255,255,255,0.6); font-size: 13px; text-transform: uppercase; font-weight: 600;">
-                    User
+                    style="padding: 10px 20px; color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">
+                    Account
                 </div>
-                <div style="padding: 0 20px; color: white; margin-bottom: 15px; display: flex; align-items: center;">
+                <div
+                    style="padding: 0 20px; color: #111827; margin-bottom: 15px; display: flex; align-items: center; font-weight: 500;">
                     <div
                         style="width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; margin-right: 8px;">
                     </div>
                     {{ user.username }}
                 </div>
-                <a href="{% url 'logout' %}" style="color: #f87171;">🚪 Logout</a>
+                <a href="{% url 'logout' %}" style="color: #ef4444;">🚪 Logout</a>
                 {% else %}
                 <a href="{% url 'login' %}">🔐 Login</a>
-                <a href="{% url 'register' %}" style="color: #34d399;">✨ Register</a>
+                <a href="{% url 'register' %}" style="color: #10b981;">✨ Register</a>
                 {% endif %}
             </div>
 
@@ -338,185 +329,12 @@
     <!-- Include Bootstrap JS bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Three.js Background & Scroll Animations -->
+    <!-- Scroll Reveal logic -->
     <script>
-        // Setup Three.js Scene
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050511, 0.001);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.z = 150;
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 0); // Transparent to show body bg
-        container.appendChild(renderer.domElement);
-
-        const group = new THREE.Group();
-        scene.add(group);
-
-        // Core visual group
-        const coreGeometry = new THREE.IcosahedronGeometry(25, 2);
-        const coreMaterial = new THREE.MeshBasicMaterial({
-            color: 0x4f46e5,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.15
-        });
-        const core = new THREE.Mesh(coreGeometry, coreMaterial);
-        group.add(core);
-
-        // Particles
-        const particleCount = 800;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
-
-        const color1 = new THREE.Color(0x06b6d4); // Cyan
-        const color2 = new THREE.Color(0x8b5cf6); // Purple
-        const color3 = new THREE.Color(0x4f46e5); // Blue
-
-        for (let i = 0; i < particleCount; i++) {
-            const r = 40 + Math.random() * 200;
-            const theta = 2 * Math.PI * Math.random();
-            const phi = Math.acos(2 * Math.random() - 1);
-
-            positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-            positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-            positions[i * 3 + 2] = r * Math.cos(phi);
-
-            const mixedColor = new THREE.Color();
-            const rand = Math.random();
-            if (rand < 0.33) mixedColor.copy(color1);
-            else if (rand < 0.66) mixedColor.copy(color2);
-            else mixedColor.copy(color3);
-
-            colors[i * 3] = mixedColor.r;
-            colors[i * 3 + 1] = mixedColor.g;
-            colors[i * 3 + 2] = mixedColor.b;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const canvas = document.createElement('canvas');
-        canvas.width = 16;
-        canvas.height = 16;
-        const context = canvas.getContext('2d');
-        context.beginPath();
-        context.arc(8, 8, 8, 0, Math.PI * 2);
-        context.fillStyle = 'white';
-        context.fill();
-        const texture = new THREE.CanvasTexture(canvas);
-
-        const material = new THREE.PointsMaterial({
-            size: 2,
-            vertexColors: true,
-            map: texture,
-            transparent: true,
-            opacity: 0.8,
-            alphaTest: 0.1,
-            blending: THREE.AdditiveBlending
-        });
-
-        const particles = new THREE.Points(geometry, material);
-        group.add(particles);
-
-        // Network Lines
-        const lineMaterial = new THREE.LineBasicMaterial({
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.1,
-            blending: THREE.AdditiveBlending
-        });
-
-        const lineGeometry = new THREE.BufferGeometry();
-        const linePositions = [];
-        const lineColors = [];
-
-        for (let i = 0; i < particleCount; i++) {
-            for (let j = i + 1; j < particleCount; j++) {
-                const dist = Math.sqrt(
-                    Math.pow(positions[i * 3] - positions[j * 3], 2) +
-                    Math.pow(positions[i * 3 + 1] - positions[j * 3 + 1], 2) +
-                    Math.pow(positions[i * 3 + 2] - positions[j * 3 + 2], 2)
-                );
-
-                if (dist < 25) {
-                    linePositions.push(
-                        positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
-                        positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
-                    );
-                    lineColors.push(
-                        colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2],
-                        colors[j * 3], colors[j * 3 + 1], colors[j * 3 + 2]
-                    );
-                }
-            }
-        }
-
-        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-        lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
-
-        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
-        group.add(lines);
-
-        // Dynamic interactions
-        let mouseX = 0;
-        let mouseY = 0;
-        let targetX = 0;
-        let targetY = 0;
-        let scrollY = 0;
-
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX - window.innerWidth / 2);
-            mouseY = (event.clientY - window.innerHeight / 2);
-        });
-
-        window.addEventListener('scroll', () => {
-            scrollY = window.scrollY;
-        });
-
-        const clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = clock.getElapsedTime();
-
-            group.rotation.y += 0.001;
-            group.rotation.x += 0.0005;
-
-            core.scale.setScalar(1 + Math.sin(time * 2) * 0.05);
-            core.rotation.y -= 0.002;
-
-            targetX = mouseX * 0.05;
-            targetY = mouseY * 0.05;
-
-            camera.position.x += (targetX - camera.position.x) * 0.02;
-            camera.position.y += (-targetY - camera.position.y) * 0.02;
-            camera.position.z = 150 - (scrollY * 0.05);
-
-            camera.lookAt(scene.position);
-            renderer.render(scene, camera);
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        animate();
-
-        // Scroll Reveal logic
         document.addEventListener("DOMContentLoaded", function () {
-            // Apply reveal classes recursively to structural elements
-            const targets = document.querySelectorAll('.card, .glass-panel, table, .form-group, .focus-item, .matrix-card, .notification-item');
+            const targets = document.querySelectorAll('.card, table, .form-group, .focus-item, .matrix-card, .notification-item');
             targets.forEach((el, index) => {
                 el.classList.add('scroll-reveal');
-                // Stagger transition slightly
                 el.style.transitionDelay = `${(index % 5) * 0.1}s`;
             });
 

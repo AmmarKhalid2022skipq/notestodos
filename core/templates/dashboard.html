@@ -7,56 +7,66 @@
     <!-- 1. Header Section with Dynamic Greeting -->
     <header class="d-flex justify-content-between align-items-end mb-5 anime-slide-down">
         <div>
-            <div class="subtitle text-uppercase tracking-wider mb-2">My Workspace</div>
-            <h1 class="display-4 fw-bold text-gradient">
+            <div class="subtitle text-uppercase tracking-wider mb-2 text-muted fw-bold"
+                style="font-size: 0.75rem; letter-spacing: 1px;">My Workspace</div>
+            <h1 class="display-4 fw-bold" style="color: #1e40af;">
                 Good <span id="time-greeting">Day</span>, {{ user.username }}! 👋
             </h1>
             <p class="text-muted lead mb-0">Here's what's happening today.</p>
         </div>
         <div class="d-flex gap-3">
-            <form method="get" class="search-bar-container">
-                <input type="text" name="q" placeholder="Type to search..." value="{{ query }}">
-                <button type="submit">🔍</button>
+            <form method="get"
+                class="search-bar-container bg-white border rounded-pill px-3 py-2 shadow-sm d-flex align-items-center">
+                <input type="text" name="q" placeholder="Type to search..." value="{{ query }}"
+                    class="border-0 shadow-none bg-transparent" style="outline: none; width: 200px;">
+                <button type="submit" class="border-0 bg-transparent text-muted">🔍</button>
             </form>
-            <a href="{% url 'todos_add' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-lg hover-lift">
+            <a href="{% url 'todos_add' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm hover-lift"
+                style="background: #1e40af; border: none;">
                 <span>⚡ Quick Task</span>
             </a>
         </div>
     </header>
 
-    <!-- 2. Stats Row (Glassmorphism Cards) -->
+    <!-- 2. Stats Row (Solid Cards) -->
     <div class="row g-4 mb-5 anime-fade-in-up">
         <div class="col-md-4">
-            <div class="stat-card glass-card accent-blue">
-                <div class="icon-wrapper">📝</div>
+            <div class="card stat-card accent-blue p-4 border-0 shadow-sm position-relative overflow-hidden h-100">
+                <div class="icon-wrapper fs-2 mb-3">📝</div>
                 <div class="stat-content">
-                    <h3>{{ notes_count }}</h3>
-                    <p>Total Notes</p>
+                    <h3 class="display-5 fw-bold text-dark mb-0">{{ notes_count }}</h3>
+                    <p class="text-muted text-uppercase fw-bold m-0" style="font-size: 0.8rem; letter-spacing: 1px;">
+                        Total Notes</p>
                 </div>
                 <a href="{% url 'notes_list' %}" class="stretched-link"></a>
-                <div class="stat-bg-icon">📝</div>
+                <div class="stat-bg-icon position-absolute opacity-10"
+                    style="right: -10px; bottom: -20px; font-size: 6rem; transform: rotate(-15deg);">📝</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="stat-card glass-card accent-amber">
-                <div class="icon-wrapper">⏳</div>
+            <div class="card stat-card accent-amber p-4 border-0 shadow-sm position-relative overflow-hidden h-100">
+                <div class="icon-wrapper fs-2 mb-3">⏳</div>
                 <div class="stat-content">
-                    <h3>{{ todos_count }}</h3>
-                    <p>Pending Tasks</p>
+                    <h3 class="display-5 fw-bold text-dark mb-0">{{ todos_count }}</h3>
+                    <p class="text-muted text-uppercase fw-bold m-0" style="font-size: 0.8rem; letter-spacing: 1px;">
+                        Pending Tasks</p>
                 </div>
                 <a href="{% url 'todos_list' %}" class="stretched-link"></a>
-                <div class="stat-bg-icon">⚡</div>
+                <div class="stat-bg-icon position-absolute opacity-10"
+                    style="right: -10px; bottom: -20px; font-size: 6rem; transform: rotate(-15deg);">⚡</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="stat-card glass-card accent-green">
-                <div class="icon-wrapper">🏆</div>
+            <div class="card stat-card accent-green p-4 border-0 shadow-sm position-relative overflow-hidden h-100">
+                <div class="icon-wrapper fs-2 mb-3">🏆</div>
                 <div class="stat-content">
-                    <h3>{{ completed_todos }}</h3>
-                    <p>Completed</p>
+                    <h3 class="display-5 fw-bold text-dark mb-0">{{ completed_todos }}</h3>
+                    <p class="text-muted text-uppercase fw-bold m-0" style="font-size: 0.8rem; letter-spacing: 1px;">
+                        Completed</p>
                 </div>
                 <a href="{% url 'todos_list' %}" class="stretched-link"></a>
-                <div class="stat-bg-icon">✅</div>
+                <div class="stat-bg-icon position-absolute opacity-10"
+                    style="right: -10px; bottom: -20px; font-size: 6rem; transform: rotate(-15deg);">✅</div>
             </div>
         </div>
     </div>
@@ -65,22 +75,21 @@
     {% if query %}
     <div class="row mb-5 anime-fade-in-up">
         <div class="col-12">
-            <h5 class="fw-bold mb-4">🔍 Search Results for "{{ query }}"</h5>
+            <h5 class="fw-bold mb-4 text-dark">🔍 Search Results for "{{ query }}"</h5>
 
             {% if notes_results or todos_results %}
             <div class="row g-4">
                 {% if notes_results %}
                 <div class="col-md-6">
-                    <div class="glass-panel p-4 h-100">
+                    <div class="card p-4 h-100 shadow-sm border-0">
                         <h6 class="text-uppercase text-primary fw-bold mb-3"
                             style="font-size: 0.8rem; letter-spacing: 1px;">📝 Notes Found ({{ notes_results.count }})
                         </h6>
                         <div class="d-flex flex-column gap-3">
                             {% for note in notes_results %}
                             <a href="{% url 'notes_edit' note.id %}"
-                                class="d-block text-decoration-none text-white p-3 rounded hover-lift"
-                                style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.2);">
-                                <div class="fw-bold text-white">{{ note.title }}</div>
+                                class="d-block text-decoration-none text-dark p-3 rounded hover-lift bg-light border">
+                                <div class="fw-bold">{{ note.title }}</div>
                                 <div class="small text-muted mt-1">{{ note.content|striptags|truncatechars:100 }}</div>
                             </a>
                             {% endfor %}
@@ -91,21 +100,20 @@
 
                 {% if todos_results %}
                 <div class="col-md-6">
-                    <div class="glass-panel p-4 h-100">
+                    <div class="card p-4 h-100 shadow-sm border-0">
                         <h6 class="text-uppercase text-success fw-bold mb-3"
                             style="font-size: 0.8rem; letter-spacing: 1px;">✅ Todos Found ({{ todos_results.count }})
                         </h6>
                         <div class="d-flex flex-column gap-3">
                             {% for todo in todos_results %}
                             <a href="{% url 'todos_edit' todo.id %}"
-                                class="d-block text-decoration-none text-white p-3 rounded hover-lift"
-                                style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.2);">
+                                class="d-block text-decoration-none text-dark p-3 rounded hover-lift bg-light border">
                                 <div class="d-flex justify-content-between">
-                                    <div class="fw-bold text-white">{{ todo.task }}</div>
+                                    <div class="fw-bold">{{ todo.task }}</div>
                                     {% if todo.done %}
-                                    <span class="badge bg-success-subtle text-success">Done</span>
+                                    <span class="badge bg-success text-white">Done</span>
                                     {% else %}
-                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                    <span class="badge bg-warning text-dark">Pending</span>
                                     {% endif %}
                                 </div>
                                 <div class="small text-muted mt-1">Due: {{ todo.due_date|default:"No Date" }}</div>
@@ -117,9 +125,9 @@
                 {% endif %}
             </div>
             {% else %}
-            <div class="glass-panel p-5 text-center">
+            <div class="card p-5 text-center shadow-sm border-0 bg-white">
                 <div class="h1 mb-3">😕</div>
-                <h5 class="text-muted">No results found for "{{ query }}"</h5>
+                <h5 class="text-dark fw-bold">No results found for "{{ query }}"</h5>
                 <p class="text-muted small">Try searching for something else.</p>
             </div>
             {% endif %}
@@ -134,8 +142,8 @@
             <!-- Urgent Focus (Today) -->
             <section class="mb-5 anime-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold m-0">🔥 Today's Focus</h4>
-                    <span class="badge bg-light text-secondary rounded-pill px-3 py-2">
+                    <h4 class="fw-bold m-0 text-dark">🔥 Today's Focus</h4>
+                    <span class="badge bg-primary rounded-pill px-3 py-2 fw-normal">
                         {{ today_todos.count }} Tasks Due
                     </span>
                 </div>
@@ -143,18 +151,19 @@
                 {% if today_todos %}
                 <div class="focus-list">
                     {% for todo in today_todos|slice:":4" %}
-                    <div class="focus-item glass-panel">
-                        <div class="d-flex align-items-center gap-3">
+                    <div class="card focus-item border-0 shadow-sm mb-3">
+                        <div class="d-flex align-items-center gap-3 p-3">
                             <div class="priority-indicator {% if todo.is_important %}high{% endif %}"></div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-bold">{{ todo.task }}</h6>
+                                <h6 class="mb-1 fw-bold text-dark">{{ todo.task }}</h6>
                                 <div class="d-flex gap-3 text-muted" style="font-size: 0.85rem;">
                                     {% if todo.reminder %}
                                     <span>⏰ {{ todo.reminder|date:"g:i A" }}</span>
                                     {% else %}
                                     <span>📅 Today</span>
                                     {% endif %}
-                                    <span class="badge bg-soft-blue text-primary">{{ todo.get_activity_display }}</span>
+                                    <span class="badge bg-light text-primary border">{{ todo.get_activity_display
+                                        }}</span>
                                 </div>
                             </div>
                             <form method="POST" action="{% url 'todos_check_done' todo.id %}">
@@ -166,53 +175,63 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <div class="empty-state glass-panel text-center py-5">
-                    <div class="mb-3" style="font-size: 3rem;">🎉</div>
-                    <h5>All caught up!</h5>
-                    <p class="text-muted">You have no tasks due today. Enjoy your freedom.</p>
-                    <a href="{% url 'todos_add' %}" class="btn btn-sm btn-outline-primary rounded-pill mt-2">Plan
-                        Ahead</a>
+                <div class="card empty-state text-center py-5 shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="mb-3" style="font-size: 3rem;">🎉</div>
+                        <h5 class="text-dark fw-bold">All caught up!</h5>
+                        <p class="text-muted">You have no tasks due today. Enjoy your freedom.</p>
+                        <a href="{% url 'todos_add' %}"
+                            class="btn btn-sm btn-outline-primary rounded-pill mt-2 fw-bold">Plan Ahead</a>
+                    </div>
                 </div>
                 {% endif %}
             </section>
 
             <!-- Priority Matrix Grid -->
             <section class="anime-fade-in-up" style="animation-delay: 0.2s;">
-                <h4 class="fw-bold mb-4">⚡ Priority Matrix</h4>
+                <h4 class="fw-bold mb-4 text-dark">⚡ Priority Matrix</h4>
                 <div class="row g-4">
                     <!-- Q1: Urgent & Important -->
                     <div class="col-md-6">
-                        <div class="matrix-card glass-panel danger-glow">
-                            <div class="matrix-header text-danger">
-                                <span>🚨 Do First</span>
-                                <small>Urgent & Important</small>
-                            </div>
-                            <div class="matrix-body">
-                                {% for t in important_urgent %}
-                                <a href="{% url 'todos_edit' t.id %}" class="matrix-item">
-                                    {{ t.task|truncatechars:30 }}
-                                </a>
-                                {% empty %}
-                                <div class="text-muted small fst-italic">Nothing critical right now.</div>
-                                {% endfor %}
+                        <div class="card matrix-card shadow-sm border-0 h-100"
+                            style="border-top: 4px solid #ef4444 !important;">
+                            <div class="card-body">
+                                <div class="matrix-header text-danger mb-3 d-flex flex-column">
+                                    <span class="fw-bold fs-5">🚨 Do First</span>
+                                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Urgent &
+                                        Important</small>
+                                </div>
+                                <div class="matrix-body">
+                                    {% for t in important_urgent %}
+                                    <a href="{% url 'todos_edit' t.id %}" class="matrix-item bg-light border text-dark">
+                                        {{ t.task|truncatechars:30 }}
+                                    </a>
+                                    {% empty %}
+                                    <div class="text-muted small fst-italic">Nothing critical right now.</div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!-- Q2: Schedule -->
                     <div class="col-md-6">
-                        <div class="matrix-card glass-panel info-glow">
-                            <div class="matrix-header text-primary">
-                                <span>📅 Schedule</span>
-                                <small>Important, Not Urgent</small>
-                            </div>
-                            <div class="matrix-body">
-                                {% for t in important_not_urgent %}
-                                <a href="{% url 'todos_edit' t.id %}" class="matrix-item">
-                                    {{ t.task|truncatechars:30 }}
-                                </a>
-                                {% empty %}
-                                <div class="text-muted small fst-italic">Plan some goals.</div>
-                                {% endfor %}
+                        <div class="card matrix-card shadow-sm border-0 h-100"
+                            style="border-top: 4px solid #3b82f6 !important;">
+                            <div class="card-body">
+                                <div class="matrix-header text-primary mb-3 d-flex flex-column">
+                                    <span class="fw-bold fs-5">📅 Schedule</span>
+                                    <small class="text-muted fw-bold text-uppercase"
+                                        style="font-size: 0.7rem;">Important, Not Urgent</small>
+                                </div>
+                                <div class="matrix-body">
+                                    {% for t in important_not_urgent %}
+                                    <a href="{% url 'todos_edit' t.id %}" class="matrix-item bg-light border text-dark">
+                                        {{ t.task|truncatechars:30 }}
+                                    </a>
+                                    {% empty %}
+                                    <div class="text-muted small fst-italic">Plan some goals.</div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,37 +241,37 @@
 
         <!-- RIGHT COLUMN: ALERTS & CALENDAR -->
         <div class="col-lg-4">
-            <!-- Interactive Calendar Widget -->
-            <div class="glass-panel text-center mb-4 p-4 anime-fade-in-up"
-                style="animation-delay: 0.3s; background: rgba(255,255,255,0.1);">
+            <!-- Interactive Calendar Widget bg-white -->
+            <div class="card text-center mb-4 p-4 shadow-sm border-0 anime-fade-in-up" style="animation-delay: 0.3s;">
                 <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">
                     Current Month</h6>
-                <div class="display-1 fw-bold text-white mb-0">{{ "now"|date:"d" }}</div>
-                <div class="h4 text-primary mb-3">{{ "now"|date:"F" }}</div>
+                <div class="display-1 fw-bold text-dark mb-0">{{ "now"|date:"d" }}</div>
+                <div class="h4 text-primary mb-3 fw-bold">{{ "now"|date:"F" }}</div>
 
-                <div class="d-flex justify-content-center gap-3 mb-3">
-                    <div class="badge bg-soft-blue text-primary p-2">
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                    <div class="badge bg-light text-primary border p-2 fw-normal">
                         📅 {{ monthly_stats.pending }} Pending
                     </div>
-                    <div class="badge bg-success-subtle text-success p-2">
+                    <div class="badge bg-success text-white p-2 fw-normal shadow-sm">
                         ✅ {{ monthly_stats.completed }} Done
                     </div>
                 </div>
 
-                <a href="{% url 'todos_calendar' %}" class="btn btn-light w-100 rounded-pill fw-bold">Open Full
-                    Calendar</a>
+                <a href="{% url 'todos_calendar' %}" class="btn btn-outline-primary w-100 rounded-pill fw-bold">Open
+                    Full Calendar</a>
             </div>
 
             <!-- Notifications / Reminders -->
-            <div class="glass-panel p-0 mb-4 anime-fade-in-up" style="animation-delay: 0.4s; overflow: hidden;">
-                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50">
-                    <h6 class="m-0 fw-bold text-white">🔔 Notifications</h6>
+            <div class="card mb-4 shadow-sm border-0 anime-fade-in-up" style="animation-delay: 0.4s; overflow: hidden;">
+                <div class="card-header bg-light border-bottom border-gray-200 py-3">
+                    <h6 class="m-0 fw-bold text-dark">🔔 Notifications</h6>
                 </div>
-                <div class="p-3">
+                <div class="card-body p-3">
                     {% if overdue_reminders %}
                     {% for r in overdue_reminders|slice:":3" %}
-                    <div class="notification-item overdue mb-3">
-                        <div class="icon">⚠️</div>
+                    <div
+                        class="notification-item overdue mb-3 bg-danger-subtle border border-danger-subtle p-2 rounded d-flex gap-3">
+                        <div class="icon fs-4">⚠️</div>
                         <div>
                             <div class="fw-bold text-danger">Overdue: {{ r.task }}</div>
                             <small class="text-muted">{{ r.reminder|timesince }} ago</small>
@@ -263,10 +282,11 @@
 
                     {% if upcoming_reminders %}
                     {% for r in upcoming_reminders|slice:":3" %}
-                    <div class="notification-item upcoming mb-3">
-                        <div class="icon">⏰</div>
+                    <div
+                        class="notification-item upcoming mb-3 bg-primary-subtle border border-primary-subtle p-2 rounded d-flex gap-3">
+                        <div class="icon fs-4">⏰</div>
                         <div>
-                            <div class="fw-bold text-white">{{ r.task }}</div>
+                            <div class="fw-bold text-dark">{{ r.task }}</div>
                             <small class="text-muted">in {{ r.reminder|timeuntil }}</small>
                         </div>
                     </div>
@@ -294,159 +314,45 @@
 </script>
 
 <style>
-    /* PREMIUM CSS RESET & UTILS */
-    :root {
-        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        --glass-bg: rgba(255, 255, 255, 0.03);
-        --glass-border: 1px solid rgba(255, 255, 255, 0.05);
-        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-    }
-
-
-
-    .text-gradient {
-        background: -webkit-linear-gradient(45deg, #cbd5e1, #4f46e5);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-        font-size: 0.75rem;
-        letter-spacing: 2px;
-        font-weight: 700;
-        color: #94a3b8;
-    }
-
-    .bg-soft-blue {
-        background-color: #e0e7ff;
-    }
-
-    .search-bar-container {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 8px 16px;
-        border-radius: 50px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        display: flex;
-        align-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .search-bar-container:focus-within {
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-        border-color: #6366f1;
-    }
-
-    .search-bar-container input {
-        border: none;
-        outline: none;
-        font-size: 14px;
-        width: 200px;
-        background: transparent;
-        color: white;
-    }
-
-    .search-bar-container button {
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
+    /* SOLID LIGHT CSS UTILS */
     .hover-lift {
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .hover-lift:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
     }
 
-
-    /* GLASS CARDS */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 24px;
-        position: relative;
-        overflow: hidden;
+    .stat-card {
         transition: all 0.3s ease;
     }
 
-    .glass-card:hover {
+    .stat-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(31, 38, 135, 0.12);
-    }
-
-    .stat-content h3 {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin: 0;
-        color: white;
-    }
-
-    .stat-content p {
-        margin: 0;
-        font-weight: 600;
-        color: #64748b;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-    }
-
-    .icon-wrapper {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .stat-bg-icon {
-        position: absolute;
-        right: -20px;
-        bottom: -20px;
-        font-size: 8rem;
-        opacity: 0.05;
-        transform: rotate(-15deg);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
     }
 
     .accent-blue {
-        border-bottom: 4px solid #6366f1;
+        border-top: 4px solid #3b82f6 !important;
     }
 
     .accent-amber {
-        border-bottom: 4px solid #f59e0b;
+        border-top: 4px solid #f59e0b !important;
     }
 
     .accent-green {
-        border-bottom: 4px solid #10b981;
-    }
-
-
-    /* GLASS PANELS */
-    .glass-panel {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-        color: white;
+        border-top: 4px solid #10b981 !important;
     }
 
     /* FOCUS LIST */
     .focus-item {
-        padding: 16px;
-        margin-bottom: 12px;
-        border-left: 4px solid transparent;
+        border-left: 4px solid transparent !important;
+        transition: transform 0.2s;
     }
 
     .focus-item:hover {
         transform: scale(1.01);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
     }
 
     .priority-indicator {
@@ -457,15 +363,15 @@
     }
 
     .priority-indicator.high {
-        background: #f59e0b;
-        box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        background: #ef4444;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
     }
 
     .btn-check-circle {
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        border: 2px solid #cbd5e1;
         background: transparent;
         cursor: pointer;
         transition: all 0.2s;
@@ -473,78 +379,40 @@
 
     .btn-check-circle:hover {
         border-color: #10b981;
-        background: rgba(16, 185, 129, 0.1);
+        background: #d1fae5;
     }
-
 
     /* MATRIX CARDS */
-    .matrix-card {
-        padding: 20px;
-        height: 100%;
-    }
-
-    .danger-glow {
-        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.1);
-    }
-
     .matrix-item {
         display: block;
         padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.15);
         border-radius: 6px;
-        color: #ffffff;
         text-decoration: none;
         margin-bottom: 6px;
         font-size: 0.9rem;
         transition: 0.2s;
-        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .matrix-item:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
+        background: #f1f5f9 !important;
+        color: #1e40af !important;
         padding-left: 16px;
     }
 
-    /* NOTIFICATIONS */
-    .notification-item {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        padding: 8px;
-        border-radius: 8px;
-    }
-
-    .notification-item.overdue {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .notification-item.upcoming {
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.2);
-    }
-
-    .notification-item .icon {
-        font-size: 1.2rem;
-    }
-
-
     /* ANIMATIONS */
     .anime-slide-down {
-        animation: slideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        animation: slideDown 0.6s ease-out;
     }
 
     .anime-fade-in-up {
         opacity: 0;
-        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        animation: fadeInUp 0.6s ease-out forwards;
     }
 
     @keyframes slideDown {
         from {
             opacity: 0;
-            transform: translateY(-20px);
+            transform: translateY(-10px);
         }
 
         to {
@@ -556,7 +424,7 @@
     @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(15px);
         }
 
         to {
